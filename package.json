@@ -9,6 +9,9 @@
   },
   "author": "Aviary Technologies Inc.",
   "license": "ISC",
+  "publishConfig": {
+    "access": "public"
+  },
   "devDependencies": {
     "@types/node": "^14.14.17"
   },
