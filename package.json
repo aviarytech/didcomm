@@ -1,5 +1,5 @@
 {
-  "name": "didcomm",
+  "name": "@aviarytech/didcomm",
   "version": "0.0.1",
   "description": "",
   "main": "index.js",
@@ -8,5 +8,14 @@
     "prepare": "npm run build"
   },
   "author": "Aviary Technologies Inc.",
-  "license": "ISC"
+  "license": "ISC",
+  "devDependencies": {
+    "@types/node": "^14.14.17"
+  },
+  "dependencies": {
+    "@types/libsodium-wrappers": "^0.7.8",
+    "bs58": "^4.0.1",
+    "encryption-envelope-js": "^1.1.4",
+    "libsodium-wrappers": "^0.7.8"
+  }
 }
