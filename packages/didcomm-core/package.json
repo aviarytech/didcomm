@@ -1,0 +1,38 @@
+{
+  "name": "@aviarytech/didcomm-core",
+  "version": "0.0.0",
+  "description": "Core methods and interfaces for DIDComm",
+  "keywords": [
+    "didcomm",
+    "dids"
+  ],
+  "author": "Brian Richter <brianorwhatever@gmail.com>",
+  "homepage": "https://github.com/aviarytech/didcomm#readme",
+  "license": "BSD-3-Clause",
+  "main": "dist/index",
+  "types": "dist/index",
+  "publishConfig": {
+    "access": "public"
+  },
+  "files": [
+    "dist"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/aviarytech/didcomm.git"
+  },
+  "scripts": {
+    "build": "npm run clean && npm run compile",
+    "clean": "rm -rf ./dist",
+    "compile": "tsc -p tsconfig.build.json"
+  },
+  "bugs": {
+    "url": "https://github.com/aviarytech/didcomm/issues"
+  },
+  "dependencies": {
+    "@aviarytech/did-core": "^0.0.2",
+    "axios": "^0.21.1",
+    "did-jwt": "^5.6.2",
+    "jose": "^3.14.0"
+  }
+}

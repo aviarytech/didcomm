@@ -1,20 +1,10 @@
 {
-    "compilerOptions": {
-      "experimentalDecorators": true,
-      "emitDecoratorMetadata": true,
-      "target": "es6",
-      "module": "commonjs",
-      "outDir": "dist",
-      "noImplicitAny": false,
-      "sourceMap": true,
-      "esModuleInterop": true,
-      "skipLibCheck": true,
-      "forceConsistentCasingInFileNames": true,
-      "resolveJsonModule": true
-    },
-    "compileOnSave": true,
-    "exclude": [
-      "node_modules"
-    ]
+  "extends": "./tsconfig.build.json",
+
+  "compilerOptions": {
+    "baseUrl": "./packages",
+    "paths": {
+      "@aviarytech/didcomm-core": ["didcomm-core/src"],
+    }
   }
-  
+}
