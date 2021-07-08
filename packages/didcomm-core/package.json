@@ -1,6 +1,6 @@
 {
   "name": "@aviarytech/didcomm-core",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "Core methods and interfaces for DIDComm",
   "keywords": [
     "didcomm",
@@ -35,5 +35,5 @@
     "axios": "^0.21.1",
     "did-jwt": "^5.6.2"
   },
-  "gitHead": "75429bb941c7904661dc09ca67bf611fe649bd94"
+  "gitHead": "a0199114034ed91dbb684711dc799581d6f4bff3"
 }

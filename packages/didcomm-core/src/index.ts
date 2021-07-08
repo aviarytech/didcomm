@@ -90,7 +90,7 @@ export class DIDComm {
         throw new Error(`Non JWK unpacking not yet supported`);
       }
     } else if (mediaType === DIDCommMessageMediaType.SIGNED) {
-      // not yet supported
+      // not yet supported.
       throw new Error(`${mediaType} not supported in WACI-PEx v0.1`);
     }
     throw Error(`DIDComm media type not supported: ${mediaType}`);
