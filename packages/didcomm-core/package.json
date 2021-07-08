@@ -35,5 +35,5 @@
     "axios": "^0.21.1",
     "did-jwt": "^5.6.2"
   },
-  "gitHead": "a0199114034ed91dbb684711dc799581d6f4bff3"
+  "gitHead": "8dde2bb51fd058a046baa63a654444e7d3ecd31c"
 }
