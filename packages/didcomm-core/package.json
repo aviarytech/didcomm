@@ -30,7 +30,7 @@
     "url": "https://github.com/aviarytech/didcomm/issues"
   },
   "dependencies": {
-    "@aviarytech/did-core": "^0.0.2",
+    "@aviarytech/did-core": "^0.0.4",
     "@transmute/json-web-key-2020": "^2.0.0",
     "axios": "^0.21.1",
     "did-jwt": "^5.6.2"
