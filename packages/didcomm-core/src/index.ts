@@ -1,6 +1,3 @@
-import { FlattenedEncrypt, FlattenedJWE } from "jose/jwe/flattened/encrypt";
-import { JWK, parseJwk } from "jose/jwk/parse";
-import { flattenedDecrypt } from "jose/jwe/flattened/decrypt";
 import axios from "axios";
 import { IDIDDocument } from "@aviarytech/did-core";
 import {
@@ -8,6 +5,8 @@ import {
   IDIDCommEncryptedMessage,
   IDIDCommPlaintextPayload,
 } from "./interfaces";
+import { JsonWebKey } from "@transmute/json-web-key-2020";
+import { JWE } from "jose";
 
 export class DIDComm {
   constructor() {}
@@ -28,7 +27,10 @@ export class DIDComm {
     return prot["kid"];
   }
 
-  async createMessage(didDoc: IDIDDocument, msg: IDIDCommPlaintextPayload): Promise<FlattenedJWE> {
+  async createMessage(
+    didDoc: IDIDDocument,
+    msg: IDIDCommPlaintextPayload
+  ): Promise<JWE.GeneralJWE> {
     try {
       const service = DIDComm.getDIDCommService(didDoc);
       if (service.routingKeys.length > 1) {
@@ -42,23 +44,14 @@ export class DIDComm {
         throw Error(`DIDComm routing key not found in verification methods`);
       }
 
-      const encoder = new TextEncoder();
-      const jwk = await parseJwk(key.publicKeyJwk, "ECDH-ES+A256KW");
-      const jwe = await new FlattenedEncrypt(encoder.encode(JSON.stringify(msg)))
-        .setProtectedHeader({
-          alg: "ECDH-ES+A256KW",
-          kid: key.id,
-          typ: DIDCommMessageMediaType.ENCRYPTED,
-          enc: "A256GCM",
-        })
-        .encrypt(jwk);
-      return jwe;
+      const jwk = await JsonWebKey.from({ ...key });
+      return jwk.encrypt(Buffer.from(JSON.stringify(msg)), [key]);
     } catch (e) {
       throw e;
     }
   }
 
-  async sendMessage(didDoc: IDIDDocument, msg: FlattenedJWE): Promise<boolean> {
+  async sendMessage(didDoc: IDIDDocument, msg: JWE.GeneralJWE): Promise<boolean> {
     const service = DIDComm.getDIDCommService(didDoc);
     if (typeof service.serviceEndpoint !== "string") {
       // TODO log actual thing here so we can see what an obj looks like in practice
@@ -77,25 +70,20 @@ export class DIDComm {
   }
 
   async decryptMessageJWK(
-    msg: IDIDCommEncryptedMessage,
-    jwk: JWK
+    encryptedMsg: IDIDCommEncryptedMessage,
+    jwk: JsonWebKey
   ): Promise<IDIDCommPlaintextPayload> {
-    const key = await parseJwk(jwk, "ECDH-ES+A256KW");
-    const decoder = new TextDecoder();
-    const { plaintext, protectedHeader, additionalAuthenticatedData } = await flattenedDecrypt(
-      msg,
-      key
-    );
-    return JSON.parse(decoder.decode(plaintext)) as IDIDCommPlaintextPayload;
+    const msg = await jwk.decrypt(JSON.stringify(encryptedMsg));
+    return JSON.parse(msg.toString()) as IDIDCommPlaintextPayload;
   }
 
   async unpackMessage(
     mediaType: string,
-    key: JWK,
+    key: JsonWebKey,
     msg: IDIDCommEncryptedMessage
   ): Promise<IDIDCommPlaintextPayload> {
     if (mediaType === DIDCommMessageMediaType.ENCRYPTED) {
-      if (key.alg && key.crv) {
+      if (key.type === "JsonWebKey2020") {
         const decodedMessage = await this.decryptMessageJWK(msg, key);
         return decodedMessage;
       } else {
