@@ -31,9 +31,11 @@
   },
   "dependencies": {
     "@aviarytech/did-core": "^0.0.4",
-    "@transmute/json-web-key-2020": "^2.0.0",
+    "@transmute/jose-ld": "^0.7.0-unstable.3",
+    "@transmute/json-web-signature": "^0.7.0-unstable.3",
     "axios": "^0.21.1",
-    "did-jwt": "^5.6.2"
+    "did-jwt": "^5.6.2",
+    "jose": "^3.14.0"
   },
   "gitHead": "8dde2bb51fd058a046baa63a654444e7d3ecd31c"
 }

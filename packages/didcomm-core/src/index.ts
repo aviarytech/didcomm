@@ -5,8 +5,8 @@ import {
   IDIDCommEncryptedMessage,
   IDIDCommPlaintextPayload,
 } from "./interfaces";
-import { JsonWebKey } from "@transmute/json-web-key-2020";
-import { JWE } from "jose";
+import { JWE } from "@transmute/jose-ld";
+import { JsonWebKey } from "@transmute/json-web-signature";
 
 export class DIDComm {
   constructor() {}
@@ -14,7 +14,7 @@ export class DIDComm {
   static getDIDCommService(didDoc: IDIDDocument) {
     const service = didDoc.service.find((s) => s.type === "DIDCommMessaging");
     if (!service) {
-      throw Error(`Incompatible DID '${didDoc.id}', no 'DIDCommMessaging'service`);
+      throw Error(`Incompatible DID '${didDoc.id}', no 'DIDCommMessaging' service`);
     }
     return service;
   }
@@ -30,7 +30,7 @@ export class DIDComm {
   async createMessage(
     didDoc: IDIDDocument,
     msg: IDIDCommPlaintextPayload
-  ): Promise<JWE.GeneralJWE> {
+  ): Promise<IDIDCommEncryptedMessage> {
     try {
       const service = DIDComm.getDIDCommService(didDoc);
       if (service.routingKeys.length > 1) {
@@ -44,14 +44,40 @@ export class DIDComm {
         throw Error(`DIDComm routing key not found in verification methods`);
       }
 
-      const jwk = await JsonWebKey.from({ ...key });
-      return jwk.encrypt(Buffer.from(JSON.stringify(msg)), [key]);
+      const jwk = await JsonWebKey.from({
+        id: key.id,
+        type: "JsonWebKey2020",
+        controller: key.controller,
+        publicKeyJwk: key.publicKeyJwk,
+      });
+      const recipients = [
+        {
+          header: {
+            kid: key.id,
+            alg: "ECDH-ES+A256KW",
+          },
+        },
+      ];
+
+      const cipher = new JWE.Cipher(jwk);
+      const jwe = await cipher.encryptObject({
+        obj: document,
+        recipients,
+        publicKeyResolver: async (id: string) => {
+          if (id === key.id) {
+            return key;
+          }
+          throw new Error("publicKeyResolver does not suppport IRI " + JSON.stringify(id));
+        },
+      });
+
+      return { mediaType: DIDCommMessageMediaType.ENCRYPTED, ...jwe };
     } catch (e) {
       throw e;
     }
   }
 
-  async sendMessage(didDoc: IDIDDocument, msg: JWE.GeneralJWE): Promise<boolean> {
+  async sendMessage(didDoc: IDIDDocument, msg: IDIDCommEncryptedMessage): Promise<boolean> {
     const service = DIDComm.getDIDCommService(didDoc);
     if (typeof service.serviceEndpoint !== "string") {
       // TODO log actual thing here so we can see what an obj looks like in practice
@@ -59,7 +85,7 @@ export class DIDComm {
     }
     try {
       const resp = await axios.post(service.serviceEndpoint, msg, {
-        headers: { "Content-Type": DIDCommMessageMediaType.ENCRYPTED },
+        headers: { "Content-Type": msg.mediaType },
       });
       return resp.status === 200 || resp.status === 201;
     } catch (e) {
@@ -73,7 +99,8 @@ export class DIDComm {
     encryptedMsg: IDIDCommEncryptedMessage,
     jwk: JsonWebKey
   ): Promise<IDIDCommPlaintextPayload> {
-    const msg = await jwk.decrypt(JSON.stringify(encryptedMsg));
+    const cipher = new JWE.Cipher(jwk);
+    const msg = await cipher.decrypt({ encryptedMsg, jwk });
     return JSON.parse(msg.toString()) as IDIDCommPlaintextPayload;
   }
 

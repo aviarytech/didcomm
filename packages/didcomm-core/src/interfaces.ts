@@ -39,12 +39,11 @@ export interface IDIDCommAttachment {
 }
 
 export interface IDIDCommEncryptedMessage extends IBaseDIDCommMessage {
-  ciphertext: string;
+  protected: any;
+  recipients: any;
   iv: string;
+  ciphertext: string;
   tag: string;
-  encrypted_key: string;
-  aad: string;
-  protected: string;
 }
 
 export interface IDIDCommPlaintextPayload {
