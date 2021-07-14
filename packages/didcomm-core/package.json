@@ -30,7 +30,7 @@
     "url": "https://github.com/aviarytech/didcomm/issues"
   },
   "dependencies": {
-    "@aviarytech/did-core": "^0.0.4",
+    "@aviarytech/did-core": "^0.0.8",
     "@transmute/jose-ld": "^0.7.0-unstable.3",
     "@transmute/json-web-signature": "^0.7.0-unstable.3",
     "axios": "^0.21.1",
