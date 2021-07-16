@@ -1,0 +1,33 @@
+{
+  "@context": ["https://www.w3.org/ns/did/v1", "https://w3id.org/security/suites/jws-2020/v1"],
+  "id": "did:web:aviary.vc",
+  "verificationMethod": [
+    {
+      "id": "did:web:aviary.vc#key-0",
+      "controller": "did:web:aviary.vc",
+      "type": "JsonWebKey2020",
+      "publicKeyJwk": {
+        "kty": "OKP",
+        "crv": "Ed25519",
+        "x": "lwwA4rlV4EKENiuKFjeBx65UF6LYVUmbwhjdRAy6ZUg"
+      }
+    },
+    {
+      "id": "did:web:aviary.vc#key-1",
+      "controller": "did:web:aviary.vc",
+      "type": "X25519KeyAgreementKey2019",
+      "publicKeyBase58": "phexvDAo9oQP3PByad6crRsKioCbdDc8ro1JAvr4qh7"
+    }
+  ],
+  "authentication": ["did:web:aviary.vc#key-0"],
+  "assertionMethod": ["did:web:aviary.vc#key-0"],
+  "keyAgreement": ["did:web:aviary.vc#key-1"],
+  "service": [
+    {
+      "id": "did:web:aviary.vc#didcomm",
+      "type": "DIDCommMessaging",
+      "serviceEndpoint": "https://aviary.vc/didcomm",
+      "routingKeys": ["did:web:aviary.vc#key-1"]
+    }
+  ]
+}

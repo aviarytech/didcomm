@@ -24,7 +24,8 @@
   "scripts": {
     "build": "npm run clean && npm run compile",
     "clean": "rm -rf ./dist",
-    "compile": "tsc -p tsconfig.build.json"
+    "compile": "tsc -p tsconfig.build.json",
+    "test": "tsdx test"
   },
   "bugs": {
     "url": "https://github.com/aviarytech/didcomm/issues"
@@ -33,9 +34,16 @@
     "@aviarytech/did-core": "^0.0.9",
     "@transmute/jose-ld": "^0.7.0-unstable.3",
     "@transmute/json-web-signature": "^0.7.0-unstable.3",
+    "@transmute/x25519-key-pair": "^0.7.0-unstable.3",
     "axios": "^0.21.1",
     "did-jwt": "^5.6.2",
     "jose": "^3.14.0"
+  },
+  "devDependencies": {
+    "@types/jest": "^26.0.24",
+    "jest": "^27.0.6",
+    "ts-jest": "^27.0.3",
+    "tsdx": "^0.14.1"
   },
   "gitHead": "8dde2bb51fd058a046baa63a654444e7d3ecd31c"
 }
