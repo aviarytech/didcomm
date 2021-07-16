@@ -1,12 +1,17 @@
 import { DIDCommMessageMediaType } from "didcomm-core/src/interfaces";
 import { DIDComm } from "../src/index";
-import { X25519KeyPair } from "@transmute/x25519-key-pair";
 
 const didDoc = require("../__fixtures__/didDoc.json");
 const encryptedMsg = require("../__fixtures__/encryptedMessage.json");
 
 test("didcomm can get service block", () => {
   expect(DIDComm.getDIDCommService(didDoc).type).toBe("DIDCommMessaging");
+});
+
+test("didcomm can get key id from message", () => {
+  expect(DIDComm.getKeyIdFromMessage(encryptedMsg)).toBe(
+    "did:web:aviary.vc#key-1"
+  );
 });
 
 test("didcomm can create message", async () => {
@@ -28,7 +33,7 @@ test("didcomm can create message", async () => {
 
 test("didcomm can decrypt message", async () => {
   const privateKey = "97zaVwREYgufMTMk947v7anAKKriPgVQ6kj558A7nqHe";
-  const keyId = encryptedMsg.recipients[0].header.kid;
+  const keyId = DIDComm.getKeyIdFromMessage(encryptedMsg);
   const keyBlock = didDoc.verificationMethod.find((v) => v.id === keyId);
 
   const didcomm = new DIDComm();

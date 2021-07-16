@@ -26,13 +26,11 @@ export class DIDComm {
   }
 
   static getKeyIdFromMessage(msg: IDIDCommEncryptedMessage) {
-    const prot = JSON.parse(
-      Buffer.from(msg.protected, "base64").toString("utf-8")
-    );
-    if (!prot["kid"]) {
-      throw Error("kid not found in the message protected field");
+    try {
+      return msg.recipients[0]["header"]["kid"];
+    } catch {
+      throw Error("kid not found in the first recipient header field");
     }
-    return prot["kid"];
   }
 
   async createMessage(
