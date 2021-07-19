@@ -54,3 +54,17 @@ test("didcomm can decrypt message", async () => {
   expect(msg.type).toBe("https://didcomm.org/test");
   expect(msg.body.msg).toBe("test");
 });
+
+test("didcomm can init with handlers", () => {
+  const messageHandler = jest.fn((e) => 42 + e.body.x);
+  const didcomm = new DIDComm(new Map([["foo-message", messageHandler]]));
+
+  didcomm.handleMessage({
+    type: "foo-message",
+    id: "1",
+    to: "did:example:123",
+    body: { x: 0 },
+  });
+
+  expect(messageHandler.mock.calls.length).toBe(1);
+});

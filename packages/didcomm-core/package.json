@@ -37,7 +37,9 @@
     "@transmute/x25519-key-pair": "^0.7.0-unstable.3",
     "axios": "^0.21.1",
     "did-jwt": "^5.6.2",
-    "jose": "^3.14.0"
+    "jose": "^3.14.0",
+    "mitt": "^3.0.0",
+    "rxjs": "^6.6.7"
   },
   "devDependencies": {
     "@types/jest": "^26.0.24",

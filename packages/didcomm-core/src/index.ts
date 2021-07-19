@@ -11,9 +11,17 @@ import {
   X25519KeyAgreementKey2019,
   X25519KeyPair,
 } from "@transmute/x25519-key-pair";
+import { EventBus } from "./utils/event-bus";
 
 export class DIDComm {
-  constructor() {}
+  private messageBus: EventBus;
+
+  constructor(private messageHandlers: Map<string, Function> = new Map()) {
+    this.messageBus = new EventBus();
+    for (const [eventType, handler] of messageHandlers) {
+      this.messageBus.register(eventType, handler);
+    }
+  }
 
   static getDIDCommService(didDoc: IDIDDocument) {
     const service = didDoc.service.find((s) => s.type === "DIDCommMessaging");
@@ -31,6 +39,10 @@ export class DIDComm {
     } catch {
       throw Error("kid not found in the first recipient header field");
     }
+  }
+
+  handleMessage(message: IDIDCommPlaintextPayload) {
+    this.messageBus.dispatch(message.type, message);
   }
 
   async createMessage(
