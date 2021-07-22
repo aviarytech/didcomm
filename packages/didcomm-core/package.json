@@ -32,6 +32,7 @@
   },
   "dependencies": {
     "@aviarytech/did-core": "^0.0.9",
+    "@mattrglobal/jsonld-signatures-bbs": "^0.10.0",
     "@transmute/bls12381-key-pair": "^0.7.0-unstable.3",
     "@transmute/jose-ld": "^0.7.0-unstable.3",
     "@transmute/json-web-signature": "^0.7.0-unstable.3",
