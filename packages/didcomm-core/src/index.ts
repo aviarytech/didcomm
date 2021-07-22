@@ -12,6 +12,7 @@ import {
   X25519KeyPair,
 } from "@transmute/x25519-key-pair";
 import { EventBus } from "./utils/event-bus";
+import { getKeyPairForType } from "./utils/keypair-utils";
 
 export class DIDComm {
   private messageBus: EventBus;
@@ -23,12 +24,12 @@ export class DIDComm {
     }
   }
 
-  static getDIDCommService(didDoc: IDIDDocument) {
-    const service = didDoc.service.find((s) => s.type === "DIDCommMessaging");
+  static getDIDCommService(didDoc: IDIDDocument, id?: string) {
+    const service = id
+      ? didDoc.service.find((s) => s.id === id && s.type === "DIDCommMessaging")
+      : didDoc.service.find((s) => s.type === "DIDCommMessaging");
     if (!service) {
-      throw Error(
-        `Incompatible DID '${didDoc.id}', no 'DIDCommMessaging' service`
-      );
+      throw Error(`DIDComm service block not found`);
     }
     return service;
   }
@@ -47,11 +48,12 @@ export class DIDComm {
 
   async createMessage(
     didDoc: IDIDDocument,
-    msg: IDIDCommPlaintextPayload
+    msg: IDIDCommPlaintextPayload,
+    serviceId?: string
   ): Promise<IDIDCommEncryptedMessage> {
     try {
       // get the service block
-      const service = DIDComm.getDIDCommService(didDoc);
+      const service = DIDComm.getDIDCommService(didDoc, serviceId);
       if (service.routingKeys.length > 1) {
         throw Error(`Multiple DIDComm routing keys not yet supported`);
       }
@@ -66,12 +68,9 @@ export class DIDComm {
       if (!key) {
         throw Error(`DIDComm routing key not found in verification methods`);
       }
-      if (key.type !== "X25519KeyAgreementKey2019") {
-        throw Error(`Only X25519 keys currently supported`);
-      }
 
       // encrypt
-      const cipher = new JWE.Cipher(X25519KeyPair);
+      const cipher = new JWE.Cipher(getKeyPairForType(key));
       const recipients = [
         {
           header: {
@@ -102,9 +101,10 @@ export class DIDComm {
 
   async sendMessage(
     didDoc: IDIDDocument,
-    msg: IDIDCommEncryptedMessage
+    msg: IDIDCommEncryptedMessage,
+    serviceId?: string
   ): Promise<boolean> {
-    const service = DIDComm.getDIDCommService(didDoc);
+    const service = DIDComm.getDIDCommService(didDoc, serviceId);
     if (typeof service.serviceEndpoint !== "string") {
       // TODO log actual thing here so we can see what an obj looks like in practice
       throw Error("Only service endpoints that are strings are supported");
@@ -162,7 +162,7 @@ export class DIDComm {
       throw new Error(`key type ${key.type} not supported`);
     } else if (mediaType === DIDCommMessageMediaType.SIGNED) {
       // not yet supported.
-      throw new Error(`${mediaType} not supported in WACI-PEx v0.1`);
+      throw new Error(`${mediaType} not yet supported`);
     }
     throw Error(`DIDComm media type not supported: ${mediaType}`);
   }

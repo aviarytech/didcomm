@@ -14,7 +14,7 @@ test("didcomm can get key id from message", () => {
   );
 });
 
-test("didcomm can create message", async () => {
+test("didcomm can create message with x25519", async () => {
   const didcomm = new DIDComm();
   const msg = await didcomm.createMessage(didDoc, {
     id: "123",
@@ -22,6 +22,27 @@ test("didcomm can create message", async () => {
     type: "https://didcomm.org/test",
     body: { msg: "test" },
   });
+
+  expect(msg.mediaType).toBe(DIDCommMessageMediaType.ENCRYPTED);
+  expect(msg.protected).toBeDefined();
+  expect(msg.recipients).toBeDefined();
+  expect(msg.iv).toBeDefined();
+  expect(msg.ciphertext).toBeDefined();
+  expect(msg.tag).toBeDefined();
+});
+
+test("didcomm can create message with jwk", async () => {
+  const didcomm = new DIDComm();
+  const msg = await didcomm.createMessage(
+    didDoc,
+    {
+      id: "123",
+      to: "did:web:aviary.vc",
+      type: "https://didcomm.org/test",
+      body: { msg: "test" },
+    },
+    "did:web:aviary.vc#didcomm-2"
+  );
 
   expect(msg.mediaType).toBe(DIDCommMessageMediaType.ENCRYPTED);
   expect(msg.protected).toBeDefined();
