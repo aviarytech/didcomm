@@ -4,8 +4,8 @@ import {
   DIDCommMessageMediaType,
   IDIDCommEncryptedMessage,
   IDIDCommPlaintextPayload,
+  JsonWebKey2020,
 } from "./interfaces";
-import { JWE } from "@transmute/jose-ld";
 import { JsonWebKey } from "@transmute/json-web-signature";
 import {
   X25519KeyAgreementKey2019,
@@ -13,6 +13,10 @@ import {
 } from "@transmute/x25519-key-pair";
 import { EventBus } from "./utils/event-bus";
 import { getKeyPairForType } from "./utils/keypair-utils";
+import CompactEncrypt from "jose/jwe/compact/encrypt";
+import parseJwk from "jose/jwk/parse";
+import { decryptMessage } from "./utils/decryption";
+import { encryptMessage } from "./utils/encryption";
 
 export class DIDComm {
   private messageBus: EventBus;
@@ -70,28 +74,7 @@ export class DIDComm {
       }
 
       // encrypt
-      const cipher = new JWE.Cipher(getKeyPairForType(key));
-      const recipients = [
-        {
-          header: {
-            kid: key.id,
-            alg: "ECDH-ES+A256KW",
-          },
-        },
-      ];
-
-      const jwe = await cipher.encryptObject({
-        obj: msg,
-        recipients,
-        publicKeyResolver: async (id: string) => {
-          if (id === key.id) {
-            return key;
-          }
-          throw new Error(
-            "publicKeyResolver does not suppport IRI " + JSON.stringify(id)
-          );
-        },
-      });
+      const jwe = await encryptMessage(msg, key);
 
       return { mediaType: DIDCommMessageMediaType.ENCRYPTED, ...jwe };
     } catch (e) {
@@ -123,43 +106,13 @@ export class DIDComm {
     }
   }
 
-  async decryptMessageJWK(
-    encryptedMsg: IDIDCommEncryptedMessage,
-    jwk: JsonWebKey
-  ): Promise<IDIDCommPlaintextPayload> {
-    const cipher = new JWE.Cipher(jwk);
-    const msg = await cipher.decrypt({ encryptedMsg, jwk });
-    return JSON.parse(msg.toString()) as IDIDCommPlaintextPayload;
-  }
-
-  async decryptMessageX25519(
-    encryptedMsg: IDIDCommEncryptedMessage,
-    keyPair: X25519KeyPair
-  ): Promise<IDIDCommPlaintextPayload> {
-    const cipher = new JWE.Cipher(X25519KeyPair);
-    const msg = await cipher.decryptObject({
-      jwe: encryptedMsg,
-      keyAgreementKey: keyPair,
-    });
-    return msg as IDIDCommPlaintextPayload;
-  }
-
   async unpackMessage(
     mediaType: string,
-    key: JsonWebKey | X25519KeyAgreementKey2019,
+    key: JsonWebKey2020 | X25519KeyAgreementKey2019,
     msg: IDIDCommEncryptedMessage
   ): Promise<IDIDCommPlaintextPayload> {
     if (mediaType === DIDCommMessageMediaType.ENCRYPTED) {
-      if (key.type === "JsonWebKey2020") {
-        return await this.decryptMessageJWK(msg, key as JsonWebKey);
-      }
-      if (key.type === "X25519KeyAgreementKey2019") {
-        return await this.decryptMessageX25519(
-          msg,
-          await X25519KeyPair.from(key as X25519KeyAgreementKey2019)
-        );
-      }
-      throw new Error(`key type ${key.type} not supported`);
+      return await decryptMessage(msg, key);
     } else if (mediaType === DIDCommMessageMediaType.SIGNED) {
       // not yet supported.
       throw new Error(`${mediaType} not yet supported`);

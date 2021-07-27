@@ -3,6 +3,7 @@ import { DIDComm } from "../src/index";
 
 const didDoc = require("../__fixtures__/didDoc.json");
 const encryptedMsg = require("../__fixtures__/encryptedMessage.json");
+const encryptedMsgJwk = require("../__fixtures__/encryptedMessageJwk.json");
 
 test("didcomm can get service block", () => {
   expect(DIDComm.getDIDCommService(didDoc).type).toBe("DIDCommMessaging");
@@ -52,7 +53,7 @@ test("didcomm can create message with jwk", async () => {
   expect(msg.tag).toBeDefined();
 });
 
-test("didcomm can decrypt message", async () => {
+test("didcomm can decrypt message x25519", async () => {
   const privateKey = "97zaVwREYgufMTMk947v7anAKKriPgVQ6kj558A7nqHe";
   const keyId = DIDComm.getKeyIdFromMessage(encryptedMsg);
   const keyBlock = didDoc.verificationMethod.find((v) => v.id === keyId);
@@ -68,6 +69,35 @@ test("didcomm can decrypt message", async () => {
       privateKeyBase58: privateKey,
     },
     encryptedMsg
+  );
+
+  expect(msg.id).toBe("123");
+  expect(msg.to).toBe("did:web:aviary.vc");
+  expect(msg.type).toBe("https://didcomm.org/test");
+  expect(msg.body.msg).toBe("test");
+});
+
+test("didcomm can decrypt message jwk", async () => {
+  const privateKeyJwk = {
+    kty: "OKP",
+    crv: "X25519",
+    x: "dlqZoqdhRZJ2OMzB4XYDtpVnbbdS2jPofl_FaFV5xyY",
+    d: "u_S2GbtN9AvpItgsQHGrLo9bHf7MxYS_1rHPdPB_3j4",
+  };
+  const keyId = DIDComm.getKeyIdFromMessage(encryptedMsgJwk);
+  const keyBlock = didDoc.verificationMethod.find((v) => v.id === keyId);
+
+  const didcomm = new DIDComm();
+  const msg = await didcomm.unpackMessage(
+    encryptedMsgJwk.mediaType,
+    {
+      id: keyBlock.id,
+      controller: keyBlock.controller,
+      type: keyBlock.type,
+      publicKeyJwk: keyBlock.publicKeyJwk,
+      privateKeyJwk: privateKeyJwk,
+    },
+    encryptedMsgJwk
   );
 
   expect(msg.id).toBe("123");

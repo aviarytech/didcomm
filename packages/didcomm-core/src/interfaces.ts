@@ -80,3 +80,11 @@ export interface IDIDCommSignedMessage extends IBaseDIDCommMessage {
   payload: any;
   signature: string;
 }
+
+export interface JsonWebKey2020 {
+  id: string;
+  type: "JsonWebKey2020";
+  controller: string;
+  publicKeyJwk: any;
+  privateKeyJwk?: any;
+}

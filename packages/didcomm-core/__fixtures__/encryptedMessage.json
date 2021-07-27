@@ -1,23 +1,10 @@
 {
   "mediaType": "application/didcomm-encrypted+json",
-  "protected": "eyJlbmMiOiJYQzIwUCJ9",
   "recipients": [
-    {
-      "header": {
-        "kid": "did:web:aviary.vc#key-1",
-        "alg": "ECDH-ES+A256KW",
-        "epk": {
-          "kty": "OKP",
-          "crv": "X25519",
-          "x": "DbkG5xCQGR1Xpqa_uafsSUy4hQ_5kuHzcLOknBmS2F8"
-        },
-        "apu": "DbkG5xCQGR1Xpqa_uafsSUy4hQ_5kuHzcLOknBmS2F8",
-        "apv": "ZGlkOndlYjphdmlhcnkudmMja2V5LTE"
-      },
-      "encrypted_key": "rj-X5PdDjRz1IlypY3vDC_MKxNFU4sW_EEg8bxVzpD2jkHiyw8NNlw"
-    }
+    { "header": { "kid": "did:web:aviary.vc#key-1", "alg": "ECDH-ES+A256KW" } }
   ],
-  "iv": "x54vtBp5JGUJ01OZGbbz4_J23SbcoTI_",
-  "ciphertext": "ZMypwOK2pS-Iqkp3te8pYf5RsSZCd1Z07aJnG4nYbBuOlreqiTrNHB5sSy8Ap7FRrGlbW_3LTtcjQxffnjij9VajtEFoiJfd5WcxnW9jiAl-c5oacgCnIMroWP6N",
-  "tag": "759hkjF-6qHI9H0Iq2N7zg"
+  "ciphertext": "ZUPqV4qgTEfCJ_XfaC34Bv4RPxmQq-PAEeced8Y3-nwA6ck4IRrqa1bjKV0e-UyPXkWfrvminJK4scm7DjIP8y59y2wTIH035zuS2K9i6y18KeP3BKddnnYvOUCp",
+  "iv": "j2QpNsNyn_xEywYA",
+  "tag": "00ucFHWb94_c8ympZ_Wu9w",
+  "protected": "eyJhbGciOiJFQ0RILUVTIiwiZW5jIjoiQTI1NkdDTSIsImVwayI6eyJ4IjoiVVlIcG5pVThtZldPNGhET0h5SkdkbXFfRl9vWXlETi1la3dIdUpiM05CSSIsImNydiI6IlgyNTUxOSIsImt0eSI6Ik9LUCJ9fQ"
 }
