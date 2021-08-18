@@ -3,50 +3,34 @@
     "https://www.w3.org/ns/did/v1",
     "https://w3id.org/security/suites/jws-2020/v1"
   ],
-  "id": "did:web:aviary.vc",
+  "id": "did:web:example.com",
   "verificationMethod": [
     {
-      "id": "did:web:aviary.vc#key-0",
-      "controller": "did:web:aviary.vc",
+      "id": "did:web:example.com#key-0",
+      "controller": "did:web:example.com",
       "type": "JsonWebKey2020",
       "publicKeyJwk": {
         "kty": "OKP",
         "crv": "Ed25519",
-        "x": "lwwA4rlV4EKENiuKFjeBx65UF6LYVUmbwhjdRAy6ZUg"
+        "x": "7jrhBg0PG_kD-W8RdS05wAEzyznghrwkWCsXml9U06k"
       }
     },
     {
-      "id": "did:web:aviary.vc#key-1",
-      "controller": "did:web:aviary.vc",
+      "id": "did:web:example.com#key-1",
+      "controller": "did:web:example.com",
       "type": "X25519KeyAgreementKey2019",
-      "publicKeyBase58": "phexvDAo9oQP3PByad6crRsKioCbdDc8ro1JAvr4qh7"
-    },
-    {
-      "id": "did:web:aviary.vc#key-2",
-      "controller": "did:web:aviary.vc",
-      "type": "JsonWebKey2020",
-      "publicKeyJwk": {
-        "kty": "OKP",
-        "crv": "X25519",
-        "x": "dlqZoqdhRZJ2OMzB4XYDtpVnbbdS2jPofl_FaFV5xyY"
-      }
+      "publicKeyBase58": "3zSE11h82KtPYPj8p9cTgzr6yDWFYEsfM19xc1K5vjKY"
     }
   ],
-  "authentication": ["did:web:aviary.vc#key-0"],
-  "assertionMethod": ["did:web:aviary.vc#key-0"],
-  "keyAgreement": ["did:web:aviary.vc#key-1"],
+  "authentication": ["did:web:example.com#key-0"],
+  "assertionMethod": ["did:web:example.com#key-0"],
+  "keyAgreement": ["did:web:example.com#key-1"],
   "service": [
     {
-      "id": "did:web:aviary.vc#didcomm-1",
+      "id": "did:web:example.com#didcomm",
       "type": "DIDCommMessaging",
-      "serviceEndpoint": "https://aviary.vc/didcomm",
-      "routingKeys": ["did:web:aviary.vc#key-1"]
-    },
-    {
-      "id": "did:web:aviary.vc#didcomm-2",
-      "type": "DIDCommMessaging",
-      "serviceEndpoint": "https://aviary.vc/didcomm",
-      "routingKeys": ["did:web:aviary.vc#key-2"]
+      "serviceEndpoint": "http://example.com/didcomm",
+      "routingKeys": ["did:web:example.com#key-1"]
     }
   ]
 }

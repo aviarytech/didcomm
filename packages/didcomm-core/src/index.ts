@@ -1,82 +1,116 @@
 import axios from "axios";
-import { IDIDDocument } from "@aviarytech/did-core";
+import { IDIDDocument, IDIDResolver } from "@aviarytech/did-core";
 import {
-  DIDCommMessageMediaType,
-  IDIDCommEncryptedMessage,
-  IDIDCommPlaintextPayload,
-  JsonWebKey2020,
+  IDIDCommMessage,
+  IDIDCommMessageHandler,
+  IDIDCommPayload,
 } from "./interfaces";
-import { JsonWebKey } from "@transmute/json-web-signature";
-import {
-  X25519KeyAgreementKey2019,
-  X25519KeyPair,
-} from "@transmute/x25519-key-pair";
+import { X25519KeyAgreementKey2019 } from "@transmute/x25519-key-pair";
 import { EventBus } from "./utils/event-bus";
-import { getKeyPairForType } from "./utils/keypair-utils";
-import CompactEncrypt from "jose/jwe/compact/encrypt";
-import parseJwk from "jose/jwk/parse";
-import { decryptMessage } from "./utils/decryption";
-import { encryptMessage } from "./utils/encryption";
+// import { decryptMessage } from "./decryption";
+// import { encryptMessage } from "./encryption";
+import {
+  IJWE,
+  JsonWebKey,
+  JsonWebKey2020,
+  JWE,
+  X25519KeyPair,
+} from "@aviarytech/crypto-core";
+import { DIDCommMessageMediaType } from "./constants";
+import { ISecretResolver } from "@aviarytech/did-secrets";
+import { BaseKeyPair } from "@aviarytech/crypto-core/dist/keypairs/BaseKeyPair";
 
-export class DIDComm {
+export class DIDCommCore {
   private messageBus: EventBus;
 
-  constructor(private messageHandlers: Map<string, Function> = new Map()) {
+  constructor(
+    private messageHandlers: IDIDCommMessageHandler[],
+    private didResolver: IDIDResolver,
+    private secretResolver: ISecretResolver
+  ) {
     this.messageBus = new EventBus();
-    for (const [eventType, handler] of messageHandlers) {
-      this.messageBus.register(eventType, handler);
-    }
+    messageHandlers.forEach((eventType, handler) => {
+      console.log(eventType);
+      console.log(handler);
+    });
+    // for (const [eventType, handler] of messageHandlers) {
+    //   this.messageBus.register(eventType, handler);
+    // }
   }
 
-  static getDIDCommService(didDoc: IDIDDocument, id?: string) {
-    const service = id
-      ? didDoc.service.find((s) => s.id === id && s.type === "DIDCommMessaging")
-      : didDoc.service.find((s) => s.type === "DIDCommMessaging");
-    if (!service) {
-      throw Error(`DIDComm service block not found`);
-    }
-    return service;
+  handleMessage(message: IDIDCommMessage): void {
+    this.messageBus.dispatch(message.payload.type, message);
   }
 
-  static getKeyIdFromMessage(msg: IDIDCommEncryptedMessage) {
+  async createMessage(to: string, payload: IDIDCommPayload): Promise<IJWE> {
     try {
-      return msg.recipients[0]["header"]["kid"];
-    } catch {
-      throw Error("kid not found in the first recipient header field");
-    }
-  }
+      // get the key agreement keys
+      const didDoc = await this.didResolver.resolve(to);
+      const kaks = didDoc.getAllKeyAgreements();
 
-  handleMessage(message: IDIDCommPlaintextPayload) {
-    this.messageBus.dispatch(message.type, message);
-  }
+      const cipher = new JWE.Cipher();
+      const encrypter = cipher.createEncrypter();
+      const publicKeyResolver = (id: string) => {
+        const key = kaks.find((k) => id === k.id);
+        if (key) {
+          return key.asJsonWebKey();
+        }
+        throw new Error(
+          "publicKeyResolver does not suppport IRI " + JSON.stringify(id)
+        );
+      };
 
-  async createMessage(
-    didDoc: IDIDDocument,
-    msg: IDIDCommPlaintextPayload,
-    serviceId?: string
-  ): Promise<IDIDCommEncryptedMessage> {
-    try {
-      // get the service block
-      const service = DIDComm.getDIDCommService(didDoc, serviceId);
-      if (service.routingKeys.length > 1) {
-        throw Error(`Multiple DIDComm routing keys not yet supported`);
-      }
-      if (service.routingKeys.length === 0) {
-        throw Error(`No DIDComm routing key entry found in service block`);
-      }
+      const recipients = kaks.map((k) => {
+        return {
+          header: {
+            kid: k.id,
+            alg: "ECDH-ES+A256KW",
+          },
+        };
+      });
 
-      // get the proper key
-      const key = didDoc.verificationMethod.find(
-        (v) => v.id === service.routingKeys[0]
-      );
-      if (!key) {
-        throw Error(`DIDComm routing key not found in verification methods`);
-      }
+      const jwe = await encrypter.encrypt({
+        data: payload,
+        recipients,
+        publicKeyResolver,
+      });
 
-      // encrypt
-      const jwe = await encryptMessage(msg, key);
+      return jwe;
 
-      return { mediaType: DIDCommMessageMediaType.ENCRYPTED, ...jwe };
+      // const msg = suite.encryptObject({
+      //   obj: payload,
+      //   recipients,
+      //   publicKeyResolver: async (id: string) => {
+      //     const key = kaks.find((k) => id === k.id);
+      //     if (key) {
+      //       return key;
+      //     }
+      //     throw new Error(
+      //       "publicKeyResolver does not suppport IRI " + JSON.stringify(id)
+      //     );
+      //   },
+      // });
+
+      // const service = didDoc.getServiceByType("DIDCommMessaging");
+      // // if (service.routingKeys.length > 1) {
+      // //   throw Error(`Multiple DIDComm routing keys not yet supported`);
+      // // }
+      // // if (service.routingKeys.length === 0) {
+      // //   throw Error(`No DIDComm routing key entry found in service block`);
+      // // }
+
+      // // get the proper key
+      // const key = didDoc.verificationMethod.find(
+      //   (v) => v.id === service.routingKeys[0]
+      // );
+      // if (!key) {
+      //   throw Error(`DIDComm routing key not found in verification methods`);
+      // }
+
+      // // encrypt
+      // const jwe = await encryptMessage(msg, key);
+
+      // return { mediaType: DIDCommMessageMediaType.ENCRYPTED, ...jwe };
     } catch (e) {
       throw e;
     }
@@ -84,17 +118,18 @@ export class DIDComm {
 
   async sendMessage(
     didDoc: IDIDDocument,
-    msg: IDIDCommEncryptedMessage,
+    msg: IJWE,
     serviceId?: string
   ): Promise<boolean> {
-    const service = DIDComm.getDIDCommService(didDoc, serviceId);
+    const service = serviceId
+      ? didDoc.getServiceById(serviceId)
+      : didDoc.getServiceByType("DIDCommMessaging");
     if (typeof service.serviceEndpoint !== "string") {
-      // TODO log actual thing here so we can see what an obj looks like in practice
-      throw Error("Only service endpoints that are strings are supported");
+      throw Error("Only string service endpoints are supported");
     }
     try {
       const resp = await axios.post(service.serviceEndpoint, msg, {
-        headers: { "Content-Type": msg.mediaType },
+        headers: { "Content-Type": DIDCommMessageMediaType.ENCRYPTED },
       });
       return resp.status === 200 || resp.status === 201;
     } catch (e) {
@@ -109,10 +144,10 @@ export class DIDComm {
   async unpackMessage(
     mediaType: string,
     key: JsonWebKey2020 | X25519KeyAgreementKey2019,
-    msg: IDIDCommEncryptedMessage
-  ): Promise<IDIDCommPlaintextPayload> {
+    msg: IDIDCommMessage
+  ): Promise<IDIDCommPayload> {
     if (mediaType === DIDCommMessageMediaType.ENCRYPTED) {
-      return await decryptMessage(msg, key);
+      // return await decryptMessage(msg, key);
     } else if (mediaType === DIDCommMessageMediaType.SIGNED) {
       // not yet supported.
       throw new Error(`${mediaType} not yet supported`);

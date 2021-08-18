@@ -1,27 +1,6 @@
-import { JWE } from "did-jwt";
+import { IJWE, IJWS } from "@aviarytech/crypto-core";
 
-export const enum DIDCommMessageMediaType {
-  PLAIN = "application/didcomm-plain+json",
-  SIGNED = "application/didcomm-signed+json",
-  ENCRYPTED = "application/didcomm-encrypted+json",
-}
-
-export interface JWS {
-  header: {
-    typ: string;
-    alg: string;
-    kid: string;
-  };
-  payload: string;
-  signature: string;
-  protected?: string;
-}
-
-export interface IBaseDIDCommMessage {
-  mediaType: string;
-}
-
-export interface IDIDCommAttachment {
+interface IDIDCommAttachment {
   id: string;
   description?: string;
   filename?: string;
@@ -29,24 +8,15 @@ export interface IDIDCommAttachment {
   lastmod_time?: string;
   byte_count?: number;
   data: {
-    jws?: JWS;
+    jws?: IJWS;
     hash?: string;
     links?: string[];
     base64?: string;
-    jwe?: JWE;
     json?: object;
   };
 }
 
-export interface IDIDCommEncryptedMessage extends IBaseDIDCommMessage {
-  protected: any;
-  recipients: any;
-  iv: string;
-  ciphertext: string;
-  tag: string;
-}
-
-export interface IDIDCommPlaintextPayload {
+interface IDIDCommPayload {
   id: string;
   type: string;
   from?: string;
@@ -61,30 +31,27 @@ export interface IDIDCommPlaintextPayload {
   attachments?: IDIDCommAttachment[];
 }
 
-export interface IDIDCommPlaintextMessage extends IBaseDIDCommMessage {
-  header?: {
-    typ: string;
-    kid?: string;
-    alg?: string;
-  };
-  payload?: IDIDCommPlaintextPayload;
+interface IDIDCommMessage {
+  payload: IDIDCommPayload;
+  repudiable: boolean;
   signature?: string;
-  data?: string;
 }
 
-export interface IDIDCommSignedMessage extends IBaseDIDCommMessage {
-  header: {
-    typ: string;
-    cty: string;
-  };
-  payload: any;
-  signature: string;
+interface IDIDCommMessageHandler {
+  type: string;
+  handle: (message: IDIDCommMessage) => Promise<boolean>;
 }
 
-export interface JsonWebKey2020 {
-  id: string;
-  type: "JsonWebKey2020";
-  controller: string;
-  publicKeyJwk: any;
-  privateKeyJwk?: any;
+interface IDIDCommCore {
+  handleMessage: (message: IDIDCommMessage) => void;
+  createMessage: (msg: IDIDCommPayload) => Promise<IJWE>;
+  sendMessage: (did: string, msg: IJWE) => Promise<boolean>;
 }
+
+export {
+  IDIDCommCore,
+  IDIDCommMessage,
+  IDIDCommPayload,
+  IDIDCommAttachment,
+  IDIDCommMessageHandler,
+};

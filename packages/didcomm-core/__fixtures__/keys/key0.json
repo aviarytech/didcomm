@@ -1,0 +1,16 @@
+{
+  "id": "did:web:example.com#key-0",
+  "controller": "did:web:example.com",
+  "type": "JsonWebKey2020",
+  "publicKeyJwk": {
+    "kty": "OKP",
+    "crv": "Ed25519",
+    "x": "7jrhBg0PG_kD-W8RdS05wAEzyznghrwkWCsXml9U06k"
+  },
+  "privateKeyJwk": {
+    "kty": "OKP",
+    "crv": "Ed25519",
+    "x": "7jrhBg0PG_kD-W8RdS05wAEzyznghrwkWCsXml9U06k",
+    "d": "7HrFYCqf4TvwT2FkcIoUll-Y6tqEMRod2RmDs2HOC8Y"
+  }
+}
