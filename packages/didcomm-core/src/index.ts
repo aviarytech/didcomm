@@ -72,10 +72,11 @@ export class DIDCommCore {
   }
 
   async sendMessage(
-    didDoc: IDIDDocument,
+    did: string,
     msg: IJWE,
     serviceId?: string
   ): Promise<boolean> {
+    const didDoc = await this.didResolver.resolve(did);
     const service = serviceId
       ? didDoc.getServiceById(serviceId)
       : didDoc.getServiceByType("DIDCommMessaging");

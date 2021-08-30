@@ -85,3 +85,14 @@ test("didcomm can unpack message JsonWebKey2020", async () => {
   expect(msg.type).toBe("https://didcomm.org/test");
   expect(msg.body.msg).toBe("test");
 });
+
+test("didcomm can send message to did", async () => {
+  const secretResolver = new JSONSecretResolver(key1);
+  const didcomm = new DIDCommCore([], didResolver, secretResolver);
+  mockedAxios.get.mockResolvedValue({ data: JSON.stringify(didDoc1) });
+  mockedAxios.post.mockResolvedValue({ data: "OK", status: 200 });
+
+  const res = await didcomm.sendMessage("did:web:example.com", jwe1);
+
+  expect(res).toBeTruthy();
+});
