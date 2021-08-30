@@ -4,13 +4,13 @@
   "type": "JsonWebKey2020",
   "publicKeyJwk": {
     "kty": "OKP",
-    "crv": "Ed25519",
-    "x": "7jrhBg0PG_kD-W8RdS05wAEzyznghrwkWCsXml9U06k"
+    "crv": "X25519",
+    "x": "tsc9iYfy4hv2Mz5Q-ztGjKXeXzWUDWl5DLpfepJg4Wc"
   },
   "privateKeyJwk": {
     "kty": "OKP",
-    "crv": "Ed25519",
-    "x": "7jrhBg0PG_kD-W8RdS05wAEzyznghrwkWCsXml9U06k",
-    "d": "7HrFYCqf4TvwT2FkcIoUll-Y6tqEMRod2RmDs2HOC8Y"
+    "crv": "X25519",
+    "x": "tsc9iYfy4hv2Mz5Q-ztGjKXeXzWUDWl5DLpfepJg4Wc",
+    "d": "G1YdOhO_JFnDMVLgYXN0tnHjVgaQDaUp5Oxjl1obu8A"
   }
 }

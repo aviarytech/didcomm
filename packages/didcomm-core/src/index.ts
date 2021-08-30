@@ -5,20 +5,10 @@ import {
   IDIDCommMessageHandler,
   IDIDCommPayload,
 } from "./interfaces";
-import { X25519KeyAgreementKey2019 } from "@transmute/x25519-key-pair";
 import { EventBus } from "./utils/event-bus";
-// import { decryptMessage } from "./decryption";
-// import { encryptMessage } from "./encryption";
-import {
-  IJWE,
-  JsonWebKey,
-  JsonWebKey2020,
-  JWE,
-  X25519KeyPair,
-} from "@aviarytech/crypto-core";
+import { IJWE, JWE } from "@aviarytech/crypto-core";
 import { DIDCommMessageMediaType } from "./constants";
 import { ISecretResolver } from "@aviarytech/did-secrets";
-import { BaseKeyPair } from "@aviarytech/crypto-core/dist/keypairs/BaseKeyPair";
 
 export class DIDCommCore {
   private messageBus: EventBus;
@@ -42,11 +32,11 @@ export class DIDCommCore {
     this.messageBus.dispatch(message.payload.type, message);
   }
 
-  async createMessage(to: string, payload: IDIDCommPayload): Promise<IJWE> {
+  async packMessage(payload: IDIDCommPayload): Promise<IJWE> {
     try {
       // get the key agreement keys
-      const didDoc = await this.didResolver.resolve(to);
-      const kaks = didDoc.getAllKeyAgreements();
+      const didDoc = await this.didResolver.resolve(payload.to);
+      let kaks = didDoc.getAllKeyAgreements();
 
       const cipher = new JWE.Cipher();
       const encrypter = cipher.createEncrypter();
@@ -76,41 +66,6 @@ export class DIDCommCore {
       });
 
       return jwe;
-
-      // const msg = suite.encryptObject({
-      //   obj: payload,
-      //   recipients,
-      //   publicKeyResolver: async (id: string) => {
-      //     const key = kaks.find((k) => id === k.id);
-      //     if (key) {
-      //       return key;
-      //     }
-      //     throw new Error(
-      //       "publicKeyResolver does not suppport IRI " + JSON.stringify(id)
-      //     );
-      //   },
-      // });
-
-      // const service = didDoc.getServiceByType("DIDCommMessaging");
-      // // if (service.routingKeys.length > 1) {
-      // //   throw Error(`Multiple DIDComm routing keys not yet supported`);
-      // // }
-      // // if (service.routingKeys.length === 0) {
-      // //   throw Error(`No DIDComm routing key entry found in service block`);
-      // // }
-
-      // // get the proper key
-      // const key = didDoc.verificationMethod.find(
-      //   (v) => v.id === service.routingKeys[0]
-      // );
-      // if (!key) {
-      //   throw Error(`DIDComm routing key not found in verification methods`);
-      // }
-
-      // // encrypt
-      // const jwe = await encryptMessage(msg, key);
-
-      // return { mediaType: DIDCommMessageMediaType.ENCRYPTED, ...jwe };
     } catch (e) {
       throw e;
     }
@@ -142,12 +97,29 @@ export class DIDCommCore {
   }
 
   async unpackMessage(
-    mediaType: string,
-    key: JsonWebKey2020 | X25519KeyAgreementKey2019,
-    msg: IDIDCommMessage
+    jwe: IJWE,
+    mediaType: DIDCommMessageMediaType
   ): Promise<IDIDCommPayload> {
     if (mediaType === DIDCommMessageMediaType.ENCRYPTED) {
-      // return await decryptMessage(msg, key);
+      const cipher = new JWE.Cipher();
+      const decrypter = cipher.createDecrypter();
+      let keys = await Promise.all(
+        jwe.recipients.map((r) => this.secretResolver.resolve(r.header.kid))
+      );
+      keys = keys.filter((k) => k);
+      if (keys.length === 0) {
+        throw new Error(`No matching keys found in the recipients list`);
+      }
+      const jwk = await keys[0].asJsonWebKey();
+      const keyAgreementKey = await jwk.export({
+        privateKey: true,
+        type: "X25519KeyAgreementKey2019",
+      });
+      try {
+        return decrypter.decrypt({ jwe, keyAgreementKey });
+      } catch (e) {
+        // console.log(e);
+      }
     } else if (mediaType === DIDCommMessageMediaType.SIGNED) {
       // not yet supported.
       throw new Error(`${mediaType} not yet supported`);

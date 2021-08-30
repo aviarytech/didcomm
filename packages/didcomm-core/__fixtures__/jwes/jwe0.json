@@ -1,0 +1,22 @@
+{
+  "protected": "eyJlbmMiOiJYQzIwUCJ9",
+  "recipients": [
+    {
+      "header": {
+        "kid": "did:web:example.com#key-0",
+        "alg": "ECDH-ES+A256KW",
+        "epk": {
+          "kty": "OKP",
+          "crv": "X25519",
+          "x": "BKuae5UI1iHMzItGQtzI18l1bcoGPrg_ILRbweSqAig"
+        },
+        "apu": "BKuae5UI1iHMzItGQtzI18l1bcoGPrg_ILRbweSqAig",
+        "apv": "ZGlkOndlYjpleGFtcGxlLmNvbSNrZXktMA"
+      },
+      "encrypted_key": "NE7LvmhYOwpzc3ccAOn-N98C1abrEyENgb8OCpZLaMJPoqyw3DRMHA"
+    }
+  ],
+  "iv": "T5oRyDx3qhKYHh_ZpUngG7eWBKnHEpvb",
+  "ciphertext": "7LZPdq1WGzHzx0c1g-nhWypyT6JiAi4latqIaQkwqXREsTDYX9w6f0NNr9xZn4TCzVo3BoHIAXDbHqkQYGfSCkVIw2eSJHfLS8QXhf3ubRIJlvpr0YnpVpQvVODMvAM",
+  "tag": "twDbuQV-0WF3fCCz--zRlw"
+}
