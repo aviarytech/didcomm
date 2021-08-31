@@ -34,7 +34,7 @@
     "@aviarytech/crypto-core": "^0.0.24",
     "@aviarytech/did-core": "^0.1.11",
     "@aviarytech/did-secrets": "^0.1.10",
-    "@aviarytech/didcomm-core": "^0.1.12",
+    "@aviarytech/didcomm-core": "^0.1.13",
     "axios": "^0.21.1"
   },
   "devDependencies": {

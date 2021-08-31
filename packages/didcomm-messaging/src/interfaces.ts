@@ -17,7 +17,7 @@ interface IDIDCommMessageHandler {
 
 interface IDIDComm {
   handleMessage(message: IDIDCommMessage): boolean;
-  sendMessage: (message: IDIDCommMessage) => Promise<boolean>;
+  sendMessage: (did: string, message: IDIDCommMessage) => Promise<boolean>;
   receiveMessage(
     jwe: IJWE,
     mediaType: DIDCOMM_MESSAGE_MEDIA_TYPE

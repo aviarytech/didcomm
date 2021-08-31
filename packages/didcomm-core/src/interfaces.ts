@@ -33,7 +33,7 @@ interface IDIDCommPayload {
 }
 
 interface IDIDCommCore {
-  packMessage(payload: IDIDCommPayload): Promise<IJWE>;
+  packMessage(did: string, payload: IDIDCommPayload): Promise<IJWE>;
   unpackMessage(
     jwe: IJWE,
     mediaType: DIDCOMM_MESSAGE_MEDIA_TYPE
