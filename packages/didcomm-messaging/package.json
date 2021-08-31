@@ -42,5 +42,6 @@
     "jest": "^27.0.6",
     "ts-jest": "^27.0.3",
     "tsdx": "^0.14.1"
-  }
+  },
+  "gitHead": "050c8eb9cca2e16b28cce9cf304e156307d7eef0"
 }

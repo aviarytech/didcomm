@@ -39,5 +39,6 @@
   "dependencies": {
     "@aviarytech/didcomm-messaging": "^0.1.17",
     "@stablelib/sha256": "^1.0.1"
-  }
+  },
+  "gitHead": "050c8eb9cca2e16b28cce9cf304e156307d7eef0"
 }
