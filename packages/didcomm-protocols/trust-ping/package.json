@@ -1,0 +1,42 @@
+{
+  "name": "@aviarytech/didcomm-protocols.trust-ping",
+  "version": "0.0.1",
+  "description": "DIDComm Trust Ping Protocol",
+  "keywords": [
+    "didcomm",
+    "dids"
+  ],
+  "author": "Brian Richter <brian@aviary.tech>",
+  "homepage": "https://github.com/aviarytech/didcomm#readme",
+  "license": "BSD-3-Clause",
+  "main": "dist/index",
+  "types": "dist/index",
+  "publishConfig": {
+    "access": "public"
+  },
+  "files": [
+    "dist"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/aviarytech/didcomm.git"
+  },
+  "scripts": {
+    "build": "npm run clean && npm run compile",
+    "clean": "rm -rf ./dist",
+    "compile": "tsc -p tsconfig.build.json",
+    "test": "tsdx test"
+  },
+  "bugs": {
+    "url": "https://github.com/aviarytech/didcomm/issues"
+  },
+  "devDependencies": {
+    "@types/jest": "^27.0.1",
+    "jest": "^27.1.0",
+    "ts-jest": "^27.0.5",
+    "tsdx": "^0.14.1"
+  },
+  "dependencies": {
+    "@aviarytech/didcomm-messaging": "^0.1.13"
+  }
+}

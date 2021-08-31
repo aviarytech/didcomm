@@ -1,12 +1,12 @@
 import axios from "axios";
-import { IDIDDocument, IDIDResolver } from "@aviarytech/did-core";
+import { IDIDResolver } from "@aviarytech/did-core";
 import {
   IDIDComm,
   IDIDCommMessage,
   IDIDCommMessageHandler,
 } from "./interfaces";
 import { EventBus } from "./utils/event-bus";
-import { IJWE, JWE } from "@aviarytech/crypto-core";
+import { IJWE } from "@aviarytech/crypto-core";
 import { ISecretResolver } from "@aviarytech/did-secrets";
 import {
   DIDCommCore,
@@ -39,12 +39,12 @@ export class DIDComm implements IDIDComm {
   }
 
   async sendMessage(
-    msg: IDIDCommMessage,
+    message: IDIDCommMessage,
     serviceId?: string
   ): Promise<boolean> {
-    const packedMsg = await this.core.packMessage(msg.payload);
+    const packedMsg = await this.core.packMessage(message.payload);
 
-    const didDoc = await this.didResolver.resolve(msg.payload.to);
+    const didDoc = await this.didResolver.resolve(message.payload.to);
 
     const service = serviceId
       ? didDoc.getServiceById(serviceId)
