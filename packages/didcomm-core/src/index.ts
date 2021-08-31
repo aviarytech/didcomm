@@ -19,17 +19,17 @@ export class DIDCommCore {
     private secretResolver: ISecretResolver
   ) {
     this.messageBus = new EventBus();
-    messageHandlers.forEach((eventType, handler) => {
-      console.log(eventType);
-      console.log(handler);
+    messageHandlers.forEach((handler) => {
+      this.messageBus.register(handler.type, handler.handle);
     });
-    // for (const [eventType, handler] of messageHandlers) {
-    //   this.messageBus.register(eventType, handler);
-    // }
   }
 
-  handleMessage(message: IDIDCommMessage): void {
-    this.messageBus.dispatch(message.payload.type, message);
+  handleMessage(message: IDIDCommPayload): boolean {
+    if (this.messageHandlers.find((h) => h.type === message.type)) {
+      this.messageBus.dispatch(message.type, message);
+      return true;
+    }
+    return false;
   }
 
   async packMessage(payload: IDIDCommPayload): Promise<IJWE> {
@@ -126,5 +126,13 @@ export class DIDCommCore {
       throw new Error(`${mediaType} not yet supported`);
     }
     throw Error(`DIDComm media type not supported: ${mediaType}`);
+  }
+
+  async receiveMessage(
+    jwe: IJWE,
+    mediaType: DIDCommMessageMediaType
+  ): Promise<boolean> {
+    const unpackedMsg = await this.unpackMessage(jwe, mediaType);
+    return this.handleMessage(unpackedMsg);
   }
 }

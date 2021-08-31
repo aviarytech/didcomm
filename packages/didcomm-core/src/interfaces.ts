@@ -39,7 +39,7 @@ interface IDIDCommMessage {
 
 interface IDIDCommMessageHandler {
   type: string;
-  handle: (message: IDIDCommMessage) => Promise<boolean>;
+  handle: (message: IDIDCommPayload) => Promise<boolean>;
 }
 
 interface IDIDCommCore {

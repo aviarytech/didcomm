@@ -32,7 +32,7 @@
   },
   "dependencies": {
     "@aviarytech/crypto-core": "^0.0.24",
-    "@aviarytech/did-core": "^0.1.10",
+    "@aviarytech/did-core": "^0.1.11",
     "@aviarytech/did-secrets": "^0.1.10",
     "@mattrglobal/jsonld-signatures-bbs": "^0.10.0",
     "@transmute/bls12381-key-pair": "^0.7.0-unstable.3",
