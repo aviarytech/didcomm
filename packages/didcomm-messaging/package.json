@@ -1,6 +1,6 @@
 {
   "name": "@aviarytech/didcomm-messaging",
-  "version": "0.1.20",
+  "version": "0.1.21",
   "description": "DIDComm Messaging library for sending and receiving DIDComm messages",
   "keywords": [
     "didcomm",
