@@ -6,10 +6,10 @@ import {
 import { sha256 } from "../utils/sha256";
 import {
   TrustPingResponseMessage,
-  TRUST_PING_RESPONSE_TYPE,
+  TRUST_PING_RESPONSE_PING_TYPE,
 } from "./trust-ping-response";
 
-const TYPE = "https://didcomm.org/trust_ping/1.0/ping";
+export const TRUST_PING_PING_TYPE = "https://didcomm.org/trust_ping/1.0/ping";
 
 export interface TrustPingMessage extends IDIDCommMessage {
   payload: {
@@ -24,7 +24,7 @@ export interface TrustPingMessage extends IDIDCommMessage {
 }
 
 export class DefaultTrustPingMessageHandler implements IDIDCommMessageHandler {
-  type = TYPE;
+  type = TRUST_PING_PING_TYPE;
 
   async handle(props: {
     message: TrustPingMessage;
@@ -34,7 +34,7 @@ export class DefaultTrustPingMessageHandler implements IDIDCommMessageHandler {
     if (payload.body.response_requested) {
       if (!payload.from) {
         console.error(
-          `Error in Trust Ping Protocol: response requested but from not included`
+          `Error in Trust Ping Protocol: response requested but "from" property not included`
         );
         return false;
       }
@@ -42,11 +42,12 @@ export class DefaultTrustPingMessageHandler implements IDIDCommMessageHandler {
         payload: {
           id: sha256(payload.id),
           thid: payload.id,
-          type: TRUST_PING_RESPONSE_TYPE,
+          type: TRUST_PING_RESPONSE_PING_TYPE,
         },
         repudiable: false,
       };
-      props.didcomm.sendMessage(payload.from, responseMessage);
+      return await props.didcomm.sendMessage(payload.from, responseMessage);
     }
+    return true;
   }
 }

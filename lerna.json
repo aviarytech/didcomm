@@ -1,6 +1,4 @@
 {
-  "packages": [
-    "packages/*"
-  ],
+  "packages": ["packages/*", "packages/didcomm-protocols/*"],
   "version": "0.1.16"
 }

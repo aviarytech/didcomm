@@ -11,13 +11,14 @@ There are two parties in a trust ping: the sender and the receiver. The sender i
    The trust ping interaction begins when sender creates a ping message like this:
 
    ```
-    {
-      "type": "https://didcomm.org/trust_ping/1.0/ping",
-      "id": "518be002-de8e-456e-b3d5-8fe472477a86",
-      "body": {
-        "response_requested": true
-      }
-    }
+   {
+     "type": "https://didcomm.org/trust_ping/1.0/ping",
+     "id": "518be002-de8e-456e-b3d5-8fe472477a86",
+     "from": "did:example:123456",
+     "body": {
+       "response_requested": true
+     }
+   }
    ```
 
    response_requested: default value is true. If false, the sender is not requesting a ping_response from the receiver. If true, the sender is requesting a response.
@@ -28,8 +29,8 @@ There are two parties in a trust ping: the sender and the receiver. The sender i
 
    ```
    {
-      "type": "https://didcomm.org/trust_ping/1.0/ping_response",
-      "id": "e002518b-456e-b3d5-de8e-7a86fe472847",
-      "thid": "518be002-de8e-456e-b3d5-8fe472477a86"
+     "type": "https://didcomm.org/trust_ping/1.0/ping_response",
+     "id": "e002518b-456e-b3d5-de8e-7a86fe472847",
+     "thid": "518be002-de8e-456e-b3d5-8fe472477a86"
    }
    ```

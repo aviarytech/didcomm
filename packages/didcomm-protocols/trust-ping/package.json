@@ -37,7 +37,7 @@
     "tsdx": "^0.14.1"
   },
   "dependencies": {
-    "@aviarytech/didcomm-messaging": "^0.1.15",
+    "@aviarytech/didcomm-messaging": "^0.1.16",
     "@stablelib/sha256": "^1.0.1"
   }
 }
