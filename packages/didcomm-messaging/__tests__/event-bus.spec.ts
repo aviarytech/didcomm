@@ -4,8 +4,10 @@ const mockCallback = jest.fn((x) => 42 + x);
 test("event-bus registers and handles", () => {
   const bus = new EventBus();
 
-  bus.register("foo", (e) => {
-    mockCallback(0);
+  bus.register("foo", {
+    handle: (e) => {
+      mockCallback(0);
+    },
   });
 
   bus.dispatch("foo");

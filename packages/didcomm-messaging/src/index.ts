@@ -26,7 +26,7 @@ export class DIDComm implements IDIDComm {
     this.core = new DIDCommCore(didResolver, secretResolver);
     this.messageBus = new EventBus();
     messageHandlers.forEach((handler) => {
-      this.messageBus.register(handler.type, handler.handle);
+      this.messageBus.register(handler.type, handler);
     });
   }
 
