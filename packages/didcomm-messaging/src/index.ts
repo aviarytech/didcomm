@@ -7,9 +7,12 @@ import {
 } from "./interfaces";
 import { EventBus } from "./utils/event-bus";
 import { IJWE, JWE } from "@aviarytech/crypto-core";
-import { DIDCOMM_MESSAGE_MEDIA_TYPE } from "@aviarytech/didcomm-core";
 import { ISecretResolver } from "@aviarytech/did-secrets";
-import { DIDCommCore, IDIDCommCore } from "@aviarytech/didcomm-core";
+import {
+  DIDCommCore,
+  IDIDCommCore,
+  DIDCOMM_MESSAGE_MEDIA_TYPE,
+} from "@aviarytech/didcomm-core";
 
 export class DIDComm implements IDIDComm {
   private messageBus: EventBus;
@@ -72,4 +75,9 @@ export class DIDComm implements IDIDComm {
   }
 }
 
-export {};
+export {
+  IDIDCommMessage,
+  IDIDCommMessageHandler,
+  DIDCOMM_MESSAGE_MEDIA_TYPE,
+  IDIDComm,
+};
