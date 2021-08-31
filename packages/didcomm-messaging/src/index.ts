@@ -42,12 +42,13 @@ export class DIDComm implements IDIDComm {
   }
 
   async sendMessage(
+    did: string,
     message: IDIDCommMessage,
     serviceId?: string
   ): Promise<boolean> {
     const packedMsg = await this.core.packMessage(message.payload);
 
-    const didDoc = await this.didResolver.resolve(message.payload.to);
+    const didDoc = await this.didResolver.resolve(did);
 
     const service = serviceId
       ? didDoc.getServiceById(serviceId)

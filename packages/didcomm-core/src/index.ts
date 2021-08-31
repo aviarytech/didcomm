@@ -14,10 +14,10 @@ export class DIDCommCore {
     private secretResolver: ISecretResolver
   ) {}
 
-  async packMessage(payload: IDIDCommPayload): Promise<IJWE> {
+  async packMessage(did: string, payload: IDIDCommPayload): Promise<IJWE> {
     try {
       // get the key agreement keys
-      const didDoc = await this.didResolver.resolve(payload.to);
+      const didDoc = await this.didResolver.resolve(did);
       let kaks = didDoc.getAllKeyAgreements();
 
       const cipher = new JWE.Cipher();

@@ -28,7 +28,7 @@ test("didcomm core can pack message with X25519KeyAgreementKey2019 key", async (
   const secretResolver = new JSONSecretResolver(key1);
   const didcomm = new DIDCommCore(didResolver, secretResolver);
   mockedAxios.get.mockResolvedValue({ data: JSON.stringify(didDoc1) });
-  const message = await didcomm.packMessage(document);
+  const message = await didcomm.packMessage("did:web:example.com", document);
 
   expect(message.protected).toBeDefined();
   expect(message.iv).toBeDefined();
@@ -44,7 +44,7 @@ test("didcomm core can pack message with JsonWebKey2020", async () => {
   const didcomm = new DIDCommCore(didResolver, secretResolver);
   mockedAxios.get.mockResolvedValue({ data: JSON.stringify(didDoc0) });
 
-  const message = await didcomm.packMessage(document);
+  const message = await didcomm.packMessage("did:web:example.com", document);
 
   expect(message.protected).toBeDefined();
   expect(message.recipients).toBeDefined();

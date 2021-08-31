@@ -21,14 +21,14 @@ interface IDIDCommPayload {
   id: string;
   type: string;
   from?: string;
-  to: string;
+  to?: string[];
   thid?: string;
   pthid?: string;
   expires_time?: string;
   created_time?: string;
   next?: string;
   from_prior?: string;
-  body: any;
+  body?: any;
   attachments?: IDIDCommAttachment[];
 }
 
