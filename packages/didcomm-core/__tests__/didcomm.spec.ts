@@ -97,7 +97,7 @@ test("didcomm can send message to did", async () => {
   expect(res).toBeTruthy();
 });
 
-test("didcomm can receive message", async () => {
+test("didcomm can receive message w/ handler (success)", async () => {
   const secretResolver = new JSONSecretResolver(key1);
   const mockCallback = jest.fn(async (m) => true);
   const didcomm = new DIDCommCore(
@@ -118,4 +118,16 @@ test("didcomm can receive message", async () => {
 
   expect(result).toBeTruthy();
   expect(mockCallback.mock.calls.length).toBe(1);
+});
+
+test("didcomm can't receive message w/o handler (fail)", async () => {
+  const secretResolver = new JSONSecretResolver(key1);
+  const didcomm = new DIDCommCore([], didResolver, secretResolver);
+
+  const result = await didcomm.receiveMessage(
+    jwe1,
+    DIDCommMessageMediaType.ENCRYPTED
+  );
+
+  expect(result).toBeFalsy();
 });
