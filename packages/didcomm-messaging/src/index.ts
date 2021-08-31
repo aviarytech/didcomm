@@ -1,9 +1,9 @@
 import axios from "axios";
 import { IDIDDocument, IDIDResolver } from "@aviarytech/did-core";
 import {
+  IDIDComm,
   IDIDCommMessage,
   IDIDCommMessageHandler,
-  IDIDCommPayload,
 } from "./interfaces";
 import { EventBus } from "./utils/event-bus";
 import { IJWE, JWE } from "@aviarytech/crypto-core";
@@ -11,7 +11,7 @@ import { DIDCOMM_MESSAGE_MEDIA_TYPE } from "@aviarytech/didcomm-core";
 import { ISecretResolver } from "@aviarytech/did-secrets";
 import { DIDCommCore, IDIDCommCore } from "@aviarytech/didcomm-core";
 
-export class DIDComm {
+export class DIDComm implements IDIDComm {
   private messageBus: EventBus;
   private core: IDIDCommCore;
 
@@ -27,21 +27,21 @@ export class DIDComm {
     });
   }
 
-  handleMessage(message: IDIDCommPayload): boolean {
-    if (this.messageHandlers.find((h) => h.type === message.type)) {
-      this.messageBus.dispatch(message.type, message);
+  handleMessage(message: IDIDCommMessage): boolean {
+    if (this.messageHandlers.find((h) => h.type === message.payload.type)) {
+      this.messageBus.dispatch(message.payload.type, message);
       return true;
     }
     return false;
   }
 
   async sendMessage(
-    msg: IDIDCommPayload,
+    msg: IDIDCommMessage,
     serviceId?: string
   ): Promise<boolean> {
-    const packedMsg = await this.core.packMessage(msg);
+    const packedMsg = await this.core.packMessage(msg.payload);
 
-    const didDoc = await this.didResolver.resolve(msg.to);
+    const didDoc = await this.didResolver.resolve(msg.payload.to);
 
     const service = serviceId
       ? didDoc.getServiceById(serviceId)
@@ -68,6 +68,8 @@ export class DIDComm {
     mediaType: DIDCOMM_MESSAGE_MEDIA_TYPE
   ): Promise<boolean> {
     const unpackedMsg = await this.core.unpackMessage(jwe, mediaType);
-    return this.handleMessage(unpackedMsg);
+    return this.handleMessage({ payload: unpackedMsg, repudiable: false });
   }
 }
+
+export {};
