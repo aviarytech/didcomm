@@ -73,6 +73,7 @@ export class DIDComm implements IDIDComm {
     mediaType: DIDCOMM_MESSAGE_MEDIA_TYPE
   ): Promise<boolean> {
     const unpackedMsg = await this.core.unpackMessage(jwe, mediaType);
+    console.log(`DIDComm received ${unpackedMsg.type} message`);
     return this.handleMessage({ payload: unpackedMsg, repudiable: false });
   }
 }
