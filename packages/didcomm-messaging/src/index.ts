@@ -59,9 +59,8 @@ export class DIDComm implements IDIDComm {
       return resp.status === 200 || resp.status === 201;
     } catch (e) {
       console.log(
-        `error sending didcomm message to ${service.serviceEndpoint}`
+        `error sending didcomm message to ${service.serviceEndpoint}, received ${e.response}`
       );
-      console.log(e.response);
       return false;
     }
   }
