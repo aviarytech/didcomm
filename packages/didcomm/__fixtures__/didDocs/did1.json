@@ -1,0 +1,26 @@
+{
+  "@context": [
+    "https://www.w3.org/ns/did/v1",
+    "https://w3id.org/security/suites/jws-2020/v1"
+  ],
+  "id": "did:web:example.com",
+  "verificationMethod": [
+    {
+      "id": "did:web:example.com#key-1",
+      "controller": "did:web:example.com",
+      "type": "X25519KeyAgreementKey2019",
+      "publicKeyBase58": "3zSE11h82KtPYPj8p9cTgzr6yDWFYEsfM19xc1K5vjKY"
+    }
+  ],
+  "authentication": ["did:web:example.com#key-1"],
+  "assertionMethod": ["did:web:example.com#key-1"],
+  "keyAgreement": ["did:web:example.com#key-1"],
+  "service": [
+    {
+      "id": "did:web:example.com#didcomm",
+      "type": "DIDCommMessaging",
+      "serviceEndpoint": "http://example.com/didcomm",
+      "routingKeys": []
+    }
+  ]
+}

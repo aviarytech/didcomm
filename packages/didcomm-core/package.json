@@ -31,7 +31,7 @@
     "url": "https://github.com/aviarytech/didcomm/issues"
   },
   "dependencies": {
-    "@aviarytech/crypto-core": "^0.0.24",
+    "@aviarytech/crypto-core": "^0.0.25",
     "@aviarytech/did-core": "^0.1.11",
     "@aviarytech/did-secrets": "^0.1.10",
     "@mattrglobal/jsonld-signatures-bbs": "^0.10.0",

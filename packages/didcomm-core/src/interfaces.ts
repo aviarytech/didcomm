@@ -1,5 +1,5 @@
 import { IJWE, IJWS } from "@aviarytech/crypto-core";
-import { DIDCommMessageMediaType } from "./constants";
+import { DIDCOMM_MESSAGE_MEDIA_TYPE } from "./constants";
 
 interface IDIDCommAttachment {
   id: string;
@@ -36,7 +36,7 @@ interface IDIDCommCore {
   packMessage(payload: IDIDCommPayload): Promise<IJWE>;
   unpackMessage(
     jwe: IJWE,
-    mediaType: DIDCommMessageMediaType
+    mediaType: DIDCOMM_MESSAGE_MEDIA_TYPE
   ): Promise<IDIDCommPayload>;
 }
 

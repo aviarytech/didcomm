@@ -5,7 +5,7 @@ import {
   IDIDCommPayload,
 } from "./interfaces";
 import { IJWE, JWE } from "@aviarytech/crypto-core";
-import { DIDCommMessageMediaType } from "./constants";
+import { DIDCOMM_MESSAGE_MEDIA_TYPE } from "./constants";
 import { ISecretResolver } from "@aviarytech/did-secrets";
 
 export class DIDCommCore {
@@ -55,9 +55,9 @@ export class DIDCommCore {
 
   async unpackMessage(
     jwe: IJWE,
-    mediaType: DIDCommMessageMediaType
+    mediaType: DIDCOMM_MESSAGE_MEDIA_TYPE
   ): Promise<IDIDCommPayload> {
-    if (mediaType === DIDCommMessageMediaType.ENCRYPTED) {
+    if (mediaType === DIDCOMM_MESSAGE_MEDIA_TYPE.ENCRYPTED) {
       const cipher = new JWE.Cipher();
       const decrypter = cipher.createDecrypter();
       let keys = await Promise.all(
@@ -77,7 +77,7 @@ export class DIDCommCore {
       } catch (e) {
         // console.log(e);
       }
-    } else if (mediaType === DIDCommMessageMediaType.SIGNED) {
+    } else if (mediaType === DIDCOMM_MESSAGE_MEDIA_TYPE.SIGNED) {
       // not yet supported.
       throw new Error(`${mediaType} not yet supported`);
     }
@@ -85,4 +85,9 @@ export class DIDCommCore {
   }
 }
 
-export { IDIDCommCore, IDIDCommPayload, IDIDCommAttachment };
+export {
+  IDIDCommCore,
+  IDIDCommPayload,
+  IDIDCommAttachment,
+  DIDCOMM_MESSAGE_MEDIA_TYPE,
+};

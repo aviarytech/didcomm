@@ -5,6 +5,8 @@
     "baseUrl": "./packages",
     "paths": {
       "@aviarytech/didcomm-core": ["didcomm-core/src"],
+      "@aviarytech/didcomm": ["didcomm/src"],
+
     }
   }
 }

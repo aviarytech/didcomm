@@ -1,0 +1,30 @@
+{
+  "@context": [
+    "https://www.w3.org/ns/did/v1",
+    "https://w3id.org/security/suites/jws-2020/v1"
+  ],
+  "id": "did:web:example.com",
+  "verificationMethod": [
+    {
+      "id": "did:web:example.com#key-0",
+      "controller": "did:web:example.com",
+      "type": "JsonWebKey2020",
+      "publicKeyJwk": {
+        "kty": "OKP",
+        "crv": "X25519",
+        "x": "tsc9iYfy4hv2Mz5Q-ztGjKXeXzWUDWl5DLpfepJg4Wc"
+      }
+    }
+  ],
+  "authentication": ["did:web:example.com#key-0"],
+  "assertionMethod": ["did:web:example.com#key-0"],
+  "keyAgreement": ["did:web:example.com#key-0"],
+  "service": [
+    {
+      "id": "did:web:example.com#didcomm",
+      "type": "DIDCommMessaging",
+      "serviceEndpoint": "http://example.com/didcomm",
+      "routingKeys": []
+    }
+  ]
+}
