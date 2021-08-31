@@ -37,6 +37,6 @@
     "tsdx": "^0.14.1"
   },
   "dependencies": {
-    "@aviarytech/didcomm-messaging": "^0.1.13"
+    "@aviarytech/didcomm-messaging": "^0.1.14"
   }
 }

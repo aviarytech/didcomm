@@ -32,7 +32,10 @@ export class DIDComm implements IDIDComm {
 
   handleMessage(message: IDIDCommMessage): boolean {
     if (this.messageHandlers.find((h) => h.type === message.payload.type)) {
-      this.messageBus.dispatch(message.payload.type, message);
+      this.messageBus.dispatch(message.payload.type, {
+        message,
+        didcomm: this,
+      });
       return true;
     }
     return false;

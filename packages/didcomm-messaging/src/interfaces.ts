@@ -12,7 +12,7 @@ interface IDIDCommMessage {
 
 interface IDIDCommMessageHandler {
   type: string;
-  handle: (message: IDIDCommMessage) => Promise<boolean>;
+  handle: ({ message: IDIDCommMessage, didcomm: IDIDComm }) => Promise<boolean>;
 }
 
 interface IDIDComm {

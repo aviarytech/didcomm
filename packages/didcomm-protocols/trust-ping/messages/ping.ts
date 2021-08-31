@@ -8,5 +8,7 @@ export class TrustPingMessage {
 export class DefaultTrustPingMessageHandler implements IDIDCommMessageHandler {
   type: "https://didcomm.org/trust_ping/1.0/ping";
 
-  handle: (message: IDIDCommMessage) => Promise<boolean>;
+  handle (message: IDIDCommMessage): Promise<boolean> {
+    if ()
+  }
 }
