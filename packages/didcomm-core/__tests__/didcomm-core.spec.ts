@@ -2,7 +2,7 @@ import { DIDResolver } from "@aviarytech/did-core";
 import { JSONSecretResolver } from "@aviarytech/did-secrets";
 import { DIDCommCore } from "../src/index";
 import axios from "axios";
-import { DIDCommMessageMediaType } from "didcomm-core/src/constants";
+import { DIDCOMM_MESSAGE_MEDIA_TYPE } from "../src/constants";
 
 const didDoc0 = require("../__fixtures__/didDocs/did0.json");
 const didDoc1 = require("../__fixtures__/didDocs/did1.json");
@@ -28,7 +28,6 @@ test("didcomm core can pack message with X25519KeyAgreementKey2019 key", async (
   const secretResolver = new JSONSecretResolver(key1);
   const didcomm = new DIDCommCore(didResolver, secretResolver);
   mockedAxios.get.mockResolvedValue({ data: JSON.stringify(didDoc1) });
-
   const message = await didcomm.packMessage(document);
 
   expect(message.protected).toBeDefined();
@@ -62,7 +61,7 @@ test("didcomm core can unpack message X25519KeyAgreementKey2019", async () => {
   const didcomm = new DIDCommCore(didResolver, secretResolver);
   const msg = await didcomm.unpackMessage(
     jwe1,
-    DIDCommMessageMediaType.ENCRYPTED
+    DIDCOMM_MESSAGE_MEDIA_TYPE.ENCRYPTED
   );
 
   expect(msg.id).toBe("123");
@@ -77,7 +76,7 @@ test("didcomm core can unpack message JsonWebKey2020", async () => {
   const didcomm = new DIDCommCore(didResolver, secretResolver);
   const msg = await didcomm.unpackMessage(
     jwe0,
-    DIDCommMessageMediaType.ENCRYPTED
+    DIDCOMM_MESSAGE_MEDIA_TYPE.ENCRYPTED
   );
 
   expect(msg.id).toBe("123");

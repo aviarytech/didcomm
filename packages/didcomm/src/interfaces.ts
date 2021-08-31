@@ -1,5 +1,4 @@
 import { IJWE, IJWS } from "@aviarytech/crypto-core";
-import { DIDCOMM_MESSAGE_MEDIA_TYPE } from "./constants";
 
 interface IDIDCommAttachment {
   id: string;
@@ -32,12 +31,27 @@ interface IDIDCommPayload {
   attachments?: IDIDCommAttachment[];
 }
 
-interface IDIDCommCore {
-  packMessage(payload: IDIDCommPayload): Promise<IJWE>;
-  unpackMessage(
-    jwe: IJWE,
-    mediaType: DIDCOMM_MESSAGE_MEDIA_TYPE
-  ): Promise<IDIDCommPayload>;
+interface IDIDCommMessage {
+  payload: IDIDCommPayload;
+  repudiable: boolean;
+  signature?: string;
 }
 
-export { IDIDCommCore, IDIDCommPayload, IDIDCommAttachment };
+interface IDIDCommMessageHandler {
+  type: string;
+  handle: (message: IDIDCommPayload) => Promise<boolean>;
+}
+
+interface IDIDCommCore {
+  handleMessage: (message: IDIDCommMessage) => void;
+  createMessage: (msg: IDIDCommPayload) => Promise<IJWE>;
+  sendMessage: (did: string, msg: IJWE) => Promise<boolean>;
+}
+
+export {
+  IDIDCommCore,
+  IDIDCommMessage,
+  IDIDCommPayload,
+  IDIDCommAttachment,
+  IDIDCommMessageHandler,
+};
