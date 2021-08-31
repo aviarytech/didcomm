@@ -24,9 +24,9 @@ afterEach(() => {
   mockedAxios.get.mockReset();
 });
 
-test("didcomm can pack message with X25519KeyAgreementKey2019 key", async () => {
+test("didcomm core can pack message with X25519KeyAgreementKey2019 key", async () => {
   const secretResolver = new JSONSecretResolver(key1);
-  const didcomm = new DIDCommCore([], didResolver, secretResolver);
+  const didcomm = new DIDCommCore(didResolver, secretResolver);
   mockedAxios.get.mockResolvedValue({ data: JSON.stringify(didDoc1) });
 
   const message = await didcomm.packMessage(document);
@@ -40,9 +40,9 @@ test("didcomm can pack message with X25519KeyAgreementKey2019 key", async () => 
   expect(message.recipients[0].header.epk.x).toBeDefined();
 });
 
-test("didcomm can pack message with JsonWebKey2020", async () => {
+test("didcomm core can pack message with JsonWebKey2020", async () => {
   const secretResolver = new JSONSecretResolver(key0);
-  const didcomm = new DIDCommCore([], didResolver, secretResolver);
+  const didcomm = new DIDCommCore(didResolver, secretResolver);
   mockedAxios.get.mockResolvedValue({ data: JSON.stringify(didDoc0) });
 
   const message = await didcomm.packMessage(document);
@@ -56,10 +56,10 @@ test("didcomm can pack message with JsonWebKey2020", async () => {
   expect(message.recipients[0].header.epk.x).toBeDefined();
 });
 
-test("didcomm can unpack message X25519KeyAgreementKey2019", async () => {
+test("didcomm core can unpack message X25519KeyAgreementKey2019", async () => {
   const secretResolver = new JSONSecretResolver(key1);
 
-  const didcomm = new DIDCommCore([], didResolver, secretResolver);
+  const didcomm = new DIDCommCore(didResolver, secretResolver);
   const msg = await didcomm.unpackMessage(
     jwe1,
     DIDCommMessageMediaType.ENCRYPTED
@@ -71,10 +71,10 @@ test("didcomm can unpack message X25519KeyAgreementKey2019", async () => {
   expect(msg.body.msg).toBe("test");
 });
 
-test("didcomm can unpack message JsonWebKey2020", async () => {
+test("didcomm core can unpack message JsonWebKey2020", async () => {
   const secretResolver = new JSONSecretResolver(key0);
 
-  const didcomm = new DIDCommCore([], didResolver, secretResolver);
+  const didcomm = new DIDCommCore(didResolver, secretResolver);
   const msg = await didcomm.unpackMessage(
     jwe0,
     DIDCommMessageMediaType.ENCRYPTED
@@ -84,50 +84,4 @@ test("didcomm can unpack message JsonWebKey2020", async () => {
   expect(msg.to).toBe("did:web:example.com");
   expect(msg.type).toBe("https://didcomm.org/test");
   expect(msg.body.msg).toBe("test");
-});
-
-test("didcomm can send message to did", async () => {
-  const secretResolver = new JSONSecretResolver(key1);
-  const didcomm = new DIDCommCore([], didResolver, secretResolver);
-  mockedAxios.get.mockResolvedValue({ data: JSON.stringify(didDoc1) });
-  mockedAxios.post.mockResolvedValue({ data: "OK", status: 200 });
-
-  const res = await didcomm.sendMessage("did:web:example.com", jwe1);
-
-  expect(res).toBeTruthy();
-});
-
-test("didcomm can receive message w/ handler (success)", async () => {
-  const secretResolver = new JSONSecretResolver(key1);
-  const mockCallback = jest.fn(async (m) => true);
-  const didcomm = new DIDCommCore(
-    [
-      {
-        type: "https://didcomm.org/test",
-        handle: mockCallback,
-      },
-    ],
-    didResolver,
-    secretResolver
-  );
-
-  const result = await didcomm.receiveMessage(
-    jwe1,
-    DIDCommMessageMediaType.ENCRYPTED
-  );
-
-  expect(result).toBeTruthy();
-  expect(mockCallback.mock.calls.length).toBe(1);
-});
-
-test("didcomm can't receive message w/o handler (fail)", async () => {
-  const secretResolver = new JSONSecretResolver(key1);
-  const didcomm = new DIDCommCore([], didResolver, secretResolver);
-
-  const result = await didcomm.receiveMessage(
-    jwe1,
-    DIDCommMessageMediaType.ENCRYPTED
-  );
-
-  expect(result).toBeFalsy();
 });

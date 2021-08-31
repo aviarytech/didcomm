@@ -1,36 +1,18 @@
-import axios from "axios";
-import { IDIDDocument, IDIDResolver } from "@aviarytech/did-core";
+import { IDIDResolver } from "@aviarytech/did-core";
 import {
-  IDIDCommMessage,
-  IDIDCommMessageHandler,
+  IDIDCommAttachment,
+  IDIDCommCore,
   IDIDCommPayload,
 } from "./interfaces";
-import { EventBus } from "./utils/event-bus";
 import { IJWE, JWE } from "@aviarytech/crypto-core";
 import { DIDCommMessageMediaType } from "./constants";
 import { ISecretResolver } from "@aviarytech/did-secrets";
 
 export class DIDCommCore {
-  private messageBus: EventBus;
-
   constructor(
-    private messageHandlers: IDIDCommMessageHandler[],
     private didResolver: IDIDResolver,
     private secretResolver: ISecretResolver
-  ) {
-    this.messageBus = new EventBus();
-    messageHandlers.forEach((handler) => {
-      this.messageBus.register(handler.type, handler.handle);
-    });
-  }
-
-  handleMessage(message: IDIDCommPayload): boolean {
-    if (this.messageHandlers.find((h) => h.type === message.type)) {
-      this.messageBus.dispatch(message.type, message);
-      return true;
-    }
-    return false;
-  }
+  ) {}
 
   async packMessage(payload: IDIDCommPayload): Promise<IJWE> {
     try {
@@ -71,32 +53,6 @@ export class DIDCommCore {
     }
   }
 
-  async sendMessage(
-    did: string,
-    msg: IJWE,
-    serviceId?: string
-  ): Promise<boolean> {
-    const didDoc = await this.didResolver.resolve(did);
-    const service = serviceId
-      ? didDoc.getServiceById(serviceId)
-      : didDoc.getServiceByType("DIDCommMessaging");
-    if (typeof service.serviceEndpoint !== "string") {
-      throw Error("Only string service endpoints are supported");
-    }
-    try {
-      const resp = await axios.post(service.serviceEndpoint, msg, {
-        headers: { "Content-Type": DIDCommMessageMediaType.ENCRYPTED },
-      });
-      return resp.status === 200 || resp.status === 201;
-    } catch (e) {
-      console.log(
-        `error sending didcomm message to ${service.serviceEndpoint}`
-      );
-      console.log(e.response);
-      return false;
-    }
-  }
-
   async unpackMessage(
     jwe: IJWE,
     mediaType: DIDCommMessageMediaType
@@ -127,12 +83,6 @@ export class DIDCommCore {
     }
     throw Error(`DIDComm media type not supported: ${mediaType}`);
   }
-
-  async receiveMessage(
-    jwe: IJWE,
-    mediaType: DIDCommMessageMediaType
-  ): Promise<boolean> {
-    const unpackedMsg = await this.unpackMessage(jwe, mediaType);
-    return this.handleMessage(unpackedMsg);
-  }
 }
+
+export { IDIDCommCore, IDIDCommPayload, IDIDCommAttachment };
