@@ -1,6 +1,6 @@
 {
   "name": "@aviarytech/didcomm-core",
-  "version": "0.1.13",
+  "version": "0.1.15",
   "description": "Core methods and interfaces for DIDComm",
   "keywords": [
     "didcomm",

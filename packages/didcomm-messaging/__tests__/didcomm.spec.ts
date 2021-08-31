@@ -31,7 +31,7 @@ test("didcomm can send message to did", async () => {
   mockedAxios.get.mockResolvedValue({ data: JSON.stringify(didDoc1) });
   mockedAxios.post.mockResolvedValue({ data: "OK", status: 200 });
 
-  const res = await didcomm.sendMessage({
+  const res = await didcomm.sendMessage("did:web:example.com", {
     payload: document,
     repudiable: false,
   });

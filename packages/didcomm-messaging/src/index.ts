@@ -46,8 +46,7 @@ export class DIDComm implements IDIDComm {
     message: IDIDCommMessage,
     serviceId?: string
   ): Promise<boolean> {
-    const packedMsg = await this.core.packMessage(message.payload);
-
+    const packedMsg = await this.core.packMessage(did, message.payload);
     const didDoc = await this.didResolver.resolve(did);
 
     const service = serviceId
