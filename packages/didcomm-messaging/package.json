@@ -1,6 +1,6 @@
 {
   "name": "@aviarytech/didcomm-messaging",
-  "version": "0.1.21",
+  "version": "0.1.22",
   "description": "DIDComm Messaging library for sending and receiving DIDComm messages",
   "keywords": [
     "didcomm",
@@ -34,7 +34,7 @@
     "@aviarytech/crypto-core": "^0.0.26",
     "@aviarytech/did-core": "^0.1.11",
     "@aviarytech/did-secrets": "^0.1.10",
-    "@aviarytech/didcomm-core": "^0.1.18",
+    "@aviarytech/didcomm-core": "^0.1.22",
     "axios": "^0.21.1"
   },
   "devDependencies": {
