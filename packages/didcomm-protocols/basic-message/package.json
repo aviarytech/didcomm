@@ -1,6 +1,6 @@
 {
   "name": "@aviarytech/didcomm-protocols.basic-message",
-  "version": "0.1.22",
+  "version": "0.1.23",
   "description": "DIDComm Basic Message Protocol",
   "keywords": [
     "didcomm",
