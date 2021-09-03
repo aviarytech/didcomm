@@ -38,5 +38,6 @@
   },
   "dependencies": {
     "@aviarytech/didcomm-messaging": "^0.1.22"
-  }
+  },
+  "gitHead": "c4d227813b1801e39113bb86b9e6ca9d96e1d21b"
 }
