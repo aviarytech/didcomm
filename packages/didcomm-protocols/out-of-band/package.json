@@ -1,6 +1,6 @@
 {
   "name": "@aviarytech/didcomm-protocols.out-of-band",
-  "version": "0.1.25",
+  "version": "0.1.26",
   "description": "DIDComm Out of Band Protocol",
   "keywords": [
     "didcomm",
@@ -32,6 +32,6 @@
   },
   "dependencies": {
     "@aviarytech/crypto-core": "^0.0.27",
-    "@aviarytech/didcomm-messaging": "^0.1.22"
+    "@aviarytech/didcomm-messaging": "^0.1.26"
   }
 }
