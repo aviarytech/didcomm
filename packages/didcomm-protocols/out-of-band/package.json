@@ -33,5 +33,6 @@
   "dependencies": {
     "@aviarytech/crypto-core": "^0.0.27",
     "@aviarytech/didcomm-messaging": "^0.1.26"
-  }
+  },
+  "gitHead": "896ad3c4ab6008a686009acd542ac54af9f9afd1"
 }
