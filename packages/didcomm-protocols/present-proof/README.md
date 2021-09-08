@@ -15,3 +15,19 @@ This is version 3 of the present-proof protocol that has been created initially 
     "to": "did:example:verifier"
 }
 ```
+
+1. Request Presentation
+
+```
+{
+  "type": "https://didcomm.org/present-proof/3.0/request-presentation",
+  "id": "0ac534c8-98ed-4fe3-8a41-3600775e1e92",
+  "thid": "95e63a5f-73e1-46ac-b269-48bb22591bfa",
+  "from": "did:example:prover",
+  "to": ["did:example:verifier"],
+  "body": {},
+  "attachments": [
+    <Presentation Exchange Definition>
+  ]
+}
+```
