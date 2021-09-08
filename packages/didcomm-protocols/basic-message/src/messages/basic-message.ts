@@ -26,7 +26,7 @@ export class BasicMessage implements IDIDCommMessage {
       from,
       sha256(BASIC_MESSAGE_TYPE).slice(0, 4),
       content
-    )[0];
+    )[0].rotation;
     this.payload = {
       id,
       from,
