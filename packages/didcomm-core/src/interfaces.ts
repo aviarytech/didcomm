@@ -2,10 +2,11 @@ import { IJWE, IJWS } from "@aviarytech/crypto-core";
 import { DIDCOMM_MESSAGE_MEDIA_TYPE } from "./constants";
 
 interface IDIDCommAttachment {
-  id: string;
+  id?: string;
   description?: string;
   filename?: string;
-  mime_type?: string;
+  media_type?: string;
+  format?: string;
   lastmod_time?: string;
   byte_count?: number;
   data: {
