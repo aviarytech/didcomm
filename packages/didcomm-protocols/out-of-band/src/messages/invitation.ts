@@ -21,13 +21,13 @@ export class InvitationMessage implements IDIDCommMessage {
       accept: string[];
     };
   };
-  repudiable: boolean;
+  repudiable = false;
 
   constructor(
-    private from: string,
-    private basePath: string,
-    private goal_code?: string,
-    private goal?: string
+    from: string,
+    basePath: string,
+    goal_code?: string,
+    goal?: string
   ) {
     const created = new Date().toISOString();
     this.payload = {
