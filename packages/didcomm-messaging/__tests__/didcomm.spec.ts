@@ -73,3 +73,26 @@ test("didcomm can't receive message w/o handler (fail)", async () => {
 
   expect(result).toBeFalsy();
 });
+
+test("didcomm can receive plaintext message w/ handler (success)", async () => {
+  const secretResolver = new JSONSecretResolver(key1);
+  const mockCallback = jest.fn(async (m) => true);
+  const didcomm = new DIDComm(
+    [
+      {
+        type: "https://didcomm.org/test",
+        handle: mockCallback,
+      },
+    ],
+    didResolver,
+    secretResolver
+  );
+
+  const result = await didcomm.receiveMessage(
+    { type: "https://didcomm.org/test", id: "123" },
+    DIDCOMM_MESSAGE_MEDIA_TYPE.PLAIN
+  );
+
+  expect(result).toBeTruthy();
+  expect(mockCallback.mock.calls.length).toBe(1);
+});

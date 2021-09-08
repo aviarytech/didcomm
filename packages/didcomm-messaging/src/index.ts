@@ -12,6 +12,7 @@ import {
   DIDCommCore,
   IDIDCommCore,
   DIDCOMM_MESSAGE_MEDIA_TYPE,
+  IDIDCommPayload,
 } from "@aviarytech/didcomm-core";
 
 export class DIDComm implements IDIDComm {
@@ -61,18 +62,27 @@ export class DIDComm implements IDIDComm {
       });
       return resp.status === 200 || resp.status === 201;
     } catch (e) {
-      console.log(`error sending didcomm message to ${service.serviceEndpoint}, received ${e.response.statusCode} - ${e.response.message}`);
+      console.log(
+        `error sending didcomm message to ${service.serviceEndpoint}, received ${e.response.statusCode} - ${e.response.message}`
+      );
       return false;
     }
   }
 
   async receiveMessage(
-    jwe: IJWE,
+    msg: IJWE | IDIDCommPayload,
     mediaType: DIDCOMM_MESSAGE_MEDIA_TYPE
   ): Promise<boolean> {
-    const unpackedMsg = await this.core.unpackMessage(jwe, mediaType);
-    console.log(`DIDComm received ${unpackedMsg.type} message`);
-    return this.handleMessage({ payload: unpackedMsg, repudiable: false });
+    let finalMessage: IDIDCommPayload;
+    if (mediaType === DIDCOMM_MESSAGE_MEDIA_TYPE.ENCRYPTED) {
+      finalMessage = await this.core.unpackMessage(msg as IJWE, mediaType);
+    } else if (mediaType === DIDCOMM_MESSAGE_MEDIA_TYPE.PLAIN) {
+      finalMessage = msg as IDIDCommPayload;
+    } else {
+      throw new Error(`Unsupported Media Type: ${mediaType}`);
+    }
+    console.log(`DIDComm received ${finalMessage.type} message`);
+    return this.handleMessage({ payload: finalMessage, repudiable: false });
   }
 }
 
