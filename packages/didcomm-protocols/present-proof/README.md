@@ -31,3 +31,19 @@ This is version 3 of the present-proof protocol that has been created initially 
   ]
 }
 ```
+
+1. Presentation
+
+```
+{
+  "type": "https://didcomm.org/present-proof/3.0/presentation",
+  "id": "f1ca8245-ab2d-4d9c-8d7d-94bf310314ef",
+  "thid": "95e63a5f-73e1-46ac-b269-48bb22591bfa",
+  "from": "did:example:verifier",
+  "to": "did:example:prover",
+  "body": {},
+  "attachments": [
+      <Presentation Exchange Submission>
+  ]
+}
+```

@@ -41,7 +41,7 @@ export class RequestPresentationMessage implements IDIDCommMessage {
       to,
       created_time: new Date().toISOString(),
       body: {},
-      attachments: [],
+      attachments,
     };
   }
 }
@@ -61,10 +61,10 @@ export class RequestPresentationMessageHandler
     message: RequestPresentationMessage;
     didcomm: IDIDComm;
   }): Promise<boolean> {
-    await this.callback(props.message, props.didcomm);
     console.log(
       `Request Presentation Received: ${props.message.payload.id}, sent at ${props.message.payload.created_time}`
     );
+    await this.callback(props.message, props.didcomm);
     return true;
   }
 }

@@ -9,3 +9,9 @@ export {
   RequestPresentationMessageHandler,
   REQUEST_PRESENTATION_TYPE,
 } from "./messages/request";
+
+export {
+  PresentationMessage,
+  PresentationMessageHandler,
+  PRESENTATION_TYPE,
+} from "./messages/present";
