@@ -1,6 +1,6 @@
 {
   "name": "@aviarytech/didcomm-protocols.trust-ping",
-  "version": "0.1.26",
+  "version": "0.1.27",
   "description": "DIDComm Trust Ping Protocol",
   "keywords": [
     "didcomm",
@@ -37,7 +37,7 @@
     "tsdx": "^0.14.1"
   },
   "dependencies": {
-    "@aviarytech/didcomm-messaging": "^0.1.26",
+    "@aviarytech/didcomm-messaging": "^0.1.27",
     "@stablelib/sha256": "^1.0.1"
   },
   "gitHead": "896ad3c4ab6008a686009acd542ac54af9f9afd1"
