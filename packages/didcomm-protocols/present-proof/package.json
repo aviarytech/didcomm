@@ -1,6 +1,6 @@
 {
   "name": "@aviarytech/didcomm-protocols.present-proof",
-  "version": "0.1.29",
+  "version": "0.1.30",
   "description": "DIDComm Present Proof Protocol",
   "keywords": [
     "didcomm",
