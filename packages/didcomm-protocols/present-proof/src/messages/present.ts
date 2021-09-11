@@ -1,10 +1,10 @@
 import { sha256, sha256pow } from "@aviarytech/crypto-core";
-import { IDIDCommAttachment } from "@aviarytech/didcomm-core";
 import {
   IDIDComm,
   IDIDCommMessage,
   IDIDCommMessageHandler,
 } from "@aviarytech/didcomm-messaging";
+import { IDIFPresentationExchangeSubmissionAttachment } from "../interfaces";
 
 export const PRESENTATION_TYPE =
   "https://didcomm.org/present-proof/3.0/presentation";
@@ -18,7 +18,7 @@ export class PresentationMessage implements IDIDCommMessage {
     to: string[];
     created_time?: string;
     body: {};
-    attachments: IDIDCommAttachment[];
+    attachments: IDIFPresentationExchangeSubmissionAttachment[];
   };
   repudiable = false;
 
@@ -26,7 +26,7 @@ export class PresentationMessage implements IDIDCommMessage {
     from: string,
     to: string[],
     thid: string,
-    attachments: IDIDCommAttachment[]
+    attachments: IDIFPresentationExchangeSubmissionAttachment[]
   ) {
     const id = sha256pow(from, sha256(PRESENTATION_TYPE).slice(0, 4), "")[0]
       .rotation;
