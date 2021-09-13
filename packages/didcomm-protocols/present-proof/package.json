@@ -39,7 +39,7 @@
   "dependencies": {
     "@aviarytech/crypto-core": "^0.0.29",
     "@aviarytech/didcomm-messaging": "^0.1.35",
-    "@aviarytech/dif-presentation-exchange": "^0.0.4"
+    "@aviarytech/dif-presentation-exchange": "^0.0.5"
   },
   "gitHead": "915bd47cc465cb2243ebd26aaa0dd153294e012e"
 }
