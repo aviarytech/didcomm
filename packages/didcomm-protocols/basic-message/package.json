@@ -1,6 +1,6 @@
 {
   "name": "@aviarytech/didcomm-protocols.basic-message",
-  "version": "0.1.35",
+  "version": "0.1.42",
   "description": "DIDComm Basic Message Protocol",
   "keywords": [
     "didcomm",
@@ -38,7 +38,7 @@
   },
   "dependencies": {
     "@aviarytech/crypto-core": "^0.0.29",
-    "@aviarytech/didcomm-messaging": "^0.1.35"
+    "@aviarytech/didcomm-messaging": "^0.1.42"
   },
   "gitHead": "915bd47cc465cb2243ebd26aaa0dd153294e012e"
 }

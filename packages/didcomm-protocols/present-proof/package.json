@@ -1,6 +1,6 @@
 {
   "name": "@aviarytech/didcomm-protocols.present-proof",
-  "version": "0.1.41",
+  "version": "0.1.42",
   "description": "DIDComm Present Proof Protocol",
   "keywords": [
     "didcomm",
@@ -38,7 +38,7 @@
   },
   "dependencies": {
     "@aviarytech/crypto-core": "^0.0.29",
-    "@aviarytech/didcomm-messaging": "^0.1.35",
+    "@aviarytech/didcomm-messaging": "^0.1.42",
     "@aviarytech/dif-presentation-exchange": "^0.0.5"
   },
   "gitHead": "915bd47cc465cb2243ebd26aaa0dd153294e012e"
