@@ -45,10 +45,10 @@ export class PresentationMessage implements IDIDCommMessage {
 
 export class PresentationMessageHandler implements IDIDCommMessageHandler {
   type = PRESENTATION_TYPE;
-  callback: (msg: IDIDCommMessage, didcomm: IDIDComm) => Promise<void>;
+  callback: (msg: PresentationMessage, didcomm: IDIDComm) => Promise<void>;
 
   constructor(
-    callback: (payload: IDIDCommMessage, didcomm: IDIDComm) => Promise<void>
+    callback: (msg: PresentationMessage, didcomm: IDIDComm) => Promise<void>
   ) {
     this.callback = callback;
   }

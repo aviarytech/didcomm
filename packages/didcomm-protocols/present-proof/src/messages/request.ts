@@ -49,10 +49,16 @@ export class RequestPresentationMessage implements IDIDCommMessage {
 export class RequestPresentationMessageHandler
   implements IDIDCommMessageHandler {
   type = REQUEST_PRESENTATION_TYPE;
-  callback: (msg: IDIDCommMessage, didcomm: IDIDComm) => Promise<void>;
+  callback: (
+    msg: RequestPresentationMessage,
+    didcomm: IDIDComm
+  ) => Promise<void>;
 
   constructor(
-    callback: (payload: IDIDCommMessage, didcomm: IDIDComm) => Promise<void>
+    callback: (
+      msg: RequestPresentationMessage,
+      didcomm: IDIDComm
+    ) => Promise<void>
   ) {
     this.callback = callback;
   }
