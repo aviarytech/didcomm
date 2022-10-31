@@ -1,33 +1,43 @@
 {
-  "name": "@aviarytech/didcomm-root",
-  "version": "0.0.2",
-  "description": "DIDComm messaging library",
-  "main": "dist/index.js",
-  "author": "Aviary Technologies Inc.",
-  "license": "ISC",
-  "publishConfig": {
-    "access": "public"
-  },
-  "scripts": {
-    "clean:lock": "npx lerna exec 'rm -rf package-lock.json node_modules'",
-    "install:clean": "npx lerna clean -y && rm -rf node_modules && npm i",
-    "install:ci": "npm install --ignore-scripts && lerna link && lerna bootstrap --since origin/main --include-dependencies",
-    "bootstrap": "lerna bootstrap",
-    "lint": "lerna run lint --stream",
-    "test": "lerna run test --stream",
-    "prepublish": "lerna run build",
-    "postinstall": "npm run bootstrap",
-    "publish:stable:major": "lerna publish major",
-    "publish:stable:minor": "lerna publish minor",
-    "publish:stable:patch": "lerna publish patch",
-    "publish:unstable": "lerna publish prerelease --preid unstable --yes",
-    "release": "lerna publish",
-    "release:canary": "lerna publish --canary",
-    "build:website": "lerna run build:website --stream"
-  },
-  "devDependencies": {
-    "@types/node": "^14.14.17",
-    "lerna": "^4.0.0",
-    "ts-jest": "^27.0.5"
-  }
+	"name": "didcomm",
+	"version": "0.3.0",
+	"scripts": {
+		"dev": "vite dev",
+		"build": "svelte-kit sync && svelte-package",
+		"prepublishOnly": "echo 'Did you mean to publish `./package/`, instead of `./`?' && exit 1",
+		"test": "playwright test",
+		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
+		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
+		"lint": "prettier --plugin-search-dir . --check . && eslint .",
+		"format": "prettier --plugin-search-dir . --write .",
+		"shipit": "npm run package && pushd package && npm publish && popd"
+	},
+	"devDependencies": {
+		"@playwright/test": "1.25.0",
+		"@sveltejs/adapter-auto": "next",
+		"@sveltejs/kit": "next",
+		"@sveltejs/package": "next",
+		"@typescript-eslint/eslint-plugin": "^5.27.0",
+		"@typescript-eslint/parser": "^5.27.0",
+		"eslint": "^8.16.0",
+		"eslint-config-prettier": "^8.3.0",
+		"eslint-plugin-svelte3": "^4.0.0",
+		"prettier": "^2.6.2",
+		"prettier-plugin-svelte": "^2.7.0",
+		"svelte": "^3.44.0",
+		"svelte-check": "^2.7.1",
+		"svelte-preprocess": "^4.10.6",
+		"tslib": "^2.3.1",
+		"typescript": "^4.7.4",
+		"vite": "^3.1.0"
+	},
+	"type": "module",
+	"dependencies": {
+		"@aviarytech/crypto": "^0.0.35",
+		"@aviarytech/did-core": "^0.1.21",
+		"@sphereon/pex": "^1.1.4",
+		"@sphereon/pex-models": "^1.1.0",
+		"axios": "^1.1.3",
+		"nanoid": "^4.0.0"
+	}
 }

@@ -1,0 +1,8 @@
+{
+    "workbench.colorCustomizations": {
+        "activityBar.background": "#053607",
+        "titleBar.activeBackground": "#074B0A",
+        "titleBar.activeForeground": "#F2FEF3"
+    },
+    "jest.jestCommandLine": "npx jest"
+}
