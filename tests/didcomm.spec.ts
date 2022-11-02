@@ -1,9 +1,10 @@
 import { DIDComm } from "$lib";
 import { DIDCOMM_MESSAGE_MEDIA_TYPE } from "$lib/constants";
 import { DIDDocument, JSONSecretResolver } from "@aviarytech/dids";
-import { afterEach, beforeAll, expect, test, vi } from "vitest"
+import { afterEach, beforeAll, beforeEach, expect, test, vi } from "vitest"
 const didDoc0 = require("./fixtures/didDocs/did0.json");
 const didDoc1 = require("./fixtures/didDocs/did1.json");
+const didDocNoKAK = require("./fixtures/didDocs/did-no-kak.json");
 const key0 = require("./fixtures/keys/key0.json");
 const key1 = require("./fixtures/keys/key1.json");
 const document = require("./fixtures/document.json");
@@ -37,6 +38,23 @@ test("didcomm can send message to did", async () => {
   });
 
   expect(res).toBeTruthy();
+});
+
+test("didcomm can't send message to did w/ no kaks", async () => {
+  const secretResolver = new JSONSecretResolver(key1);
+  const mockedDoc = new DIDDocument(didDocNoKAK);
+  const didcomm = new DIDComm([], { resolve: vi.fn().mockResolvedValue(mockedDoc) }, secretResolver);
+
+  try {
+    const res = await didcomm.sendMessage("did:web:example.com", {
+      payload: document,
+      repudiable: false,
+    });
+
+    expect(false).toBeTruthy();
+  } catch (e: any) {
+    expect(e.message).toContain('No keyAgreement found')
+  }
 });
 
 test("didcomm can receive message w/ handler (success)", async () => {

@@ -18,6 +18,7 @@ export class DIDCommCore {
       // get the key agreement keys
       const didDoc = await this.didResolver.resolve(did);
       let kaks = didDoc.getAllKeyAgreements();
+      if (kaks.length === 0) throw new Error(`No keyAgreement found for ${did}`)
 
       const encrypter = new JsonWebEncryptionSuite().createEncrypter();
       const publicKeyResolver = async (id: string) => {
