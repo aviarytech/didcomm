@@ -1,6 +1,6 @@
 import { nanoid } from "nanoid"
-import type { IDIDComm, IDIDCommMessage, IDIDCommMessageHandler } from "$lib/interfaces";
-import { sha256 } from "$lib/utils";
+import type { IDIDComm, IDIDCommMessage, IDIDCommMessageHandler } from "$lib/interfaces.js";
+import { sha256 } from "$lib/utils.js";
 
 export const PROPOSE_PRESENTATION_TYPE =
   "https://didcomm.org/present-proof/3.0/propose-presentation";

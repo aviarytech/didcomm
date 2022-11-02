@@ -1,4 +1,4 @@
-export * as BasicMessage from "./basic-message"
-export * as OutOfBand from "./out-of-band"
-export * as PresentProof from "./present-proof"
-export * as TrustPing from "./trust-ping"
+export * as BasicMessage from "./basic-message/index.js"
+export * as OutOfBand from "./out-of-band/index.js"
+export * as PresentProof from "./present-proof/index.js"
+export * as TrustPing from "./trust-ping/index.js"

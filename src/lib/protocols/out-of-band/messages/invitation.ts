@@ -1,6 +1,6 @@
 import { base64url } from "@aviarytech/crypto"
-import type { IDIDComm, IDIDCommMessage, IDIDCommMessageHandler } from "$lib/interfaces";
-import { sha256 } from "$lib/utils";
+import type { IDIDComm, IDIDCommMessage, IDIDCommMessageHandler } from "$lib/interfaces.js";
+import { sha256 } from "$lib/utils.js";
 
 export const INVITATION_MESSAGE_TYPE =
   "https://didcomm.org/out-of-band/2.0/invitation";

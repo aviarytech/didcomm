@@ -1,6 +1,6 @@
 import type { IJWE, IJWS, JsonWebKey2020 } from "@aviarytech/crypto";
-import type { DIDCOMM_MESSAGE_MEDIA_TYPE } from "$lib/constants";
-import type { IDIDDocument } from "@aviarytech/did-core";
+import type { DIDCOMM_MESSAGE_MEDIA_TYPE } from "$lib/constants.js";
+import type { IDIDDocument } from "@aviarytech/dids";
 
 export interface IDIDCommAttachment {
   id?: string;
@@ -125,6 +125,6 @@ export interface IDIDComm {
   sendMessage: (did: string, message: IDIDCommMessage) => Promise<boolean>;
   receiveMessage(
     jwe: IJWE,
-    mediaType: DIDCOMM_MESSAGE_MEDIA_TYPE
+    mediaType: string
   ): Promise<boolean>;
 }

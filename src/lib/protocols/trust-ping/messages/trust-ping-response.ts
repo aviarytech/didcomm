@@ -1,8 +1,4 @@
-import {
-  IDIDComm,
-  IDIDCommMessage,
-  IDIDCommMessageHandler,
-} from "@aviarytech/didcomm-messaging";
+import type { IDIDComm, IDIDCommMessage, IDIDCommMessageHandler } from "$lib/interfaces.js";
 
 export const TRUST_PING_RESPONSE_PING_TYPE =
   "https://didcomm.org/trust_ping/1.0/ping_response";
@@ -14,6 +10,7 @@ export interface TrustPingResponseMessage extends IDIDCommMessage {
     thid: string;
     from?: string;
     to?: string[];
+    body: any;
   };
 }
 
@@ -22,7 +19,7 @@ export class DefaultTrustPingResponseMessageHandler
   type = TRUST_PING_RESPONSE_PING_TYPE;
 
   async handle(props: {
-    message: TrustPingResponseMessage;
+    message: IDIDCommMessage;
     didcomm: IDIDComm;
   }): Promise<boolean> {
     return true;

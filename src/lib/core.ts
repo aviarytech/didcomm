@@ -1,11 +1,11 @@
 import { type IJWE, JsonWebEncryptionSuite, X25519KeyAgreementKey2019 } from "@aviarytech/crypto";
-import { DIDDocumentVerificationMethod } from "@aviarytech/did-core"
 import type {
   IDIDCommPayload,
   IDIDResolver,
   ISecretResolver,
-} from "$lib/interfaces";
-import { DIDCOMM_MESSAGE_MEDIA_TYPE } from "$lib/constants";
+} from "$lib/interfaces.js";
+import { DIDCOMM_MESSAGE_MEDIA_TYPE } from "$lib/constants.js";
+import { DIDDocumentVerificationMethod } from "@aviarytech/dids";
 
 export class DIDCommCore {
   constructor(
@@ -57,10 +57,9 @@ export class DIDCommCore {
   ): Promise<IDIDCommPayload> {
     if (mediaType === DIDCOMM_MESSAGE_MEDIA_TYPE.ENCRYPTED) {
       const decrypter = new JsonWebEncryptionSuite().createDecrypter();
-      let keys = await Promise.all(
+      let keys = (await Promise.all(
         jwe.recipients?.map((r) => this.secretResolver.resolve(r.header.kid)) ?? []
-      );
-      keys = keys.filter((k) => k);
+      )).filter((k) => k);
       if (keys.length === 0) {
         throw new Error(`No matching keys found in the recipients list`);
       }

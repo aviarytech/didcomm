@@ -1,8 +1,8 @@
 import axios from "axios"
-import { DIDCOMM_MESSAGE_MEDIA_TYPE } from "./constants";
-import { DIDCommCore } from "./core";
-import { EventBus } from "./event-bus";
-import type { IDIDComm, IDIDCommCore, IDIDCommMessage, IDIDCommMessageHandler, IDIDCommPayload, IDIDResolver, ISecretResolver } from "./interfaces";
+import { DIDCOMM_MESSAGE_MEDIA_TYPE } from "$lib/constants.js";
+import { DIDCommCore } from "$lib/core.js";
+import { EventBus } from "$lib/event-bus.js";
+import type { IDIDComm, IDIDCommCore, IDIDCommMessage, IDIDCommMessageHandler, IDIDCommPayload, IDIDResolver, ISecretResolver } from "$lib/interfaces.js";
 import type { IJWE } from "@aviarytech/crypto";
 
 export class DIDComm implements IDIDComm {
@@ -43,7 +43,7 @@ export class DIDComm implements IDIDComm {
     const service = serviceId
       ? didDoc.getServiceById(serviceId)
       : didDoc.getServiceByType("DIDCommMessaging");
-    if (typeof service.serviceEndpoint !== "string") {
+    if (typeof service?.serviceEndpoint !== "string") {
       throw Error("Only string service endpoints are supported");
     }
     try {
@@ -61,7 +61,7 @@ export class DIDComm implements IDIDComm {
 
   async receiveMessage(
     msg: IJWE | IDIDCommPayload,
-    mediaType: DIDCOMM_MESSAGE_MEDIA_TYPE
+    mediaType: string
   ): Promise<boolean> {
     let finalMessage: IDIDCommPayload;
     if (mediaType === DIDCOMM_MESSAGE_MEDIA_TYPE.ENCRYPTED) {

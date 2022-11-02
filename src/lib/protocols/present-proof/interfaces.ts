@@ -1,4 +1,4 @@
-import type { IDIDCommAttachment } from "$lib/interfaces";
+import type { IDIDCommAttachment } from "$lib/interfaces.js";
 import type { IPresentationDefinition } from "@sphereon/pex"
 import type { PresentationSubmission } from "@sphereon/pex-models"
 

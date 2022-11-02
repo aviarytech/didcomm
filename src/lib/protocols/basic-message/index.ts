@@ -1,1 +1,1 @@
-export * from "./messages/basic-message"
+export * from "./messages/basic-message.js"

@@ -1,13 +1,7 @@
-import {
-  IDIDComm,
-  IDIDCommMessageHandler,
-  IDIDCommMessage,
-} from "@aviarytech/didcomm-messaging";
-import { sha256 } from "../../../utils";
-import {
-  TrustPingResponseMessage,
-  TRUST_PING_RESPONSE_PING_TYPE,
-} from "./trust-ping-response";
+import type { IDIDComm, IDIDCommMessage, IDIDCommMessageHandler } from "$lib/interfaces.js";
+import { sha256 } from "@aviarytech/crypto";
+import { TRUST_PING_RESPONSE_PING_TYPE, type TrustPingResponseMessage } from "./trust-ping-response.js";
+
 
 export const TRUST_PING_PING_TYPE = "https://didcomm.org/trust_ping/1.0/ping";
 
@@ -43,6 +37,7 @@ export class DefaultTrustPingMessageHandler implements IDIDCommMessageHandler {
           id: sha256(payload.id),
           thid: payload.id,
           type: TRUST_PING_RESPONSE_PING_TYPE,
+          body: {}
         },
         repudiable: false,
       };

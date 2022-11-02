@@ -1,1 +1,1 @@
-export * from "./messages/invitation"
+export * from "./messages/invitation.js"
