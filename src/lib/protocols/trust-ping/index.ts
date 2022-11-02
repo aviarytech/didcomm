@@ -1,2 +1,2 @@
-export * from "./messages/trust-ping.js"
-export * from "./messages/trust-ping-response.js"
+export * from "$lib/protocols/trust-ping/messages/trust-ping.js"
+export * from "$lib/protocols/trust-ping/messages/trust-ping-response.js"

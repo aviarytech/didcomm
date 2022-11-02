@@ -1,3 +1,3 @@
-export * from "./messages/present.js"
-export * from "./messages/propose.js"
-export * from "./messages/request.js"
+export * from "$lib/protocols/present-proof/messages/present.js"
+export * from "$lib/protocols/present-proof/messages/propose.js"
+export * from "$lib/protocols/present-proof/messages/request.js"

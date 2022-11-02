@@ -1,6 +1,6 @@
 import type { IDIDComm, IDIDCommMessage, IDIDCommMessageHandler } from "$lib/interfaces.js";
 import { sha256 } from "@aviarytech/crypto";
-import { TRUST_PING_RESPONSE_PING_TYPE, type TrustPingResponseMessage } from "./trust-ping-response.js";
+import { TRUST_PING_RESPONSE_PING_TYPE, type TrustPingResponseMessage } from "$lib/protocols/trust-ping/messages/trust-ping-response.js";
 
 
 export const TRUST_PING_PING_TYPE = "https://didcomm.org/trust_ping/1.0/ping";
