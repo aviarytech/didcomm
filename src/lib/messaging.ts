@@ -50,10 +50,10 @@ export class DIDComm implements IDIDComm {
       const resp = await axios.post(service.serviceEndpoint, packedMsg, {
         headers: { "Content-Type": DIDCOMM_MESSAGE_MEDIA_TYPE.ENCRYPTED },
       });
-      return resp.status === 200 || resp.status === 201;
+      return resp.status.toString().at(0) === '2';
     } catch (e: any) {
       if (e.response.statusCode) console.error(`error sending didcomm message to ${service.serviceEndpoint}, received ${e.response.statusCode} - ${e.response.message}`);
-      else console.error(`error sending didcomm message to ${service.serviceEndpoint}\n`, e.response.data)
+      else console.error(`error sending didcomm message to ${service.serviceEndpoint}\n`, `response data:`, e.response.data)
       return false;
     }
   }
@@ -63,14 +63,19 @@ export class DIDComm implements IDIDComm {
     mediaType: string
   ): Promise<boolean> {
     let finalMessage: IDIDCommPayload;
-    if (mediaType === DIDCOMM_MESSAGE_MEDIA_TYPE.ENCRYPTED) {
-      finalMessage = await this.core.unpackMessage(msg as IJWE, mediaType);
-    } else if (mediaType === DIDCOMM_MESSAGE_MEDIA_TYPE.PLAIN) {
-      finalMessage = msg as IDIDCommPayload;
-    } else {
-      throw new Error(`Unsupported Media Type: ${mediaType}`);
+    try {
+      if (mediaType === DIDCOMM_MESSAGE_MEDIA_TYPE.ENCRYPTED) {
+        finalMessage = await this.core.unpackMessage(msg as IJWE, mediaType);
+      } else if (mediaType === DIDCOMM_MESSAGE_MEDIA_TYPE.PLAIN) {
+        finalMessage = msg as IDIDCommPayload;
+      } else {
+        throw new Error(`Unsupported Media Type: ${mediaType}`);
+      }
+      console.log(`DIDComm received ${finalMessage.type} message`);
+      return this.handleMessage({ payload: finalMessage, repudiable: false });
+    } catch (e: any) {
+      console.error(e);
+      throw e;
     }
-    console.log(`DIDComm received ${finalMessage.type} message`);
-    return this.handleMessage({ payload: finalMessage, repudiable: false });
   }
 }
