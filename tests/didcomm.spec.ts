@@ -45,16 +45,12 @@ test("didcomm can't send message to did w/ no kaks", async () => {
   const mockedDoc = new DIDDocument(didDocNoKAK);
   const didcomm = new DIDComm([], { resolve: vi.fn().mockResolvedValue(mockedDoc) }, secretResolver);
 
-  try {
-    const res = await didcomm.sendMessage("did:web:example.com", {
-      payload: document,
-      repudiable: false,
-    });
+  const res = await didcomm.sendMessage("did:web:example.com", {
+    payload: document,
+    repudiable: false,
+  });
 
-    expect(false).toBeTruthy();
-  } catch (e: any) {
-    expect(e.message).toContain('No keyAgreement found')
-  }
+  expect(res).toBeFalsy()
 });
 
 test("didcomm can receive message w/ handler (success)", async () => {

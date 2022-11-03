@@ -4,6 +4,7 @@ import { DIDCommCore } from "$lib/core.js";
 import { EventBus } from "$lib/event-bus.js";
 import type { IDIDComm, IDIDCommCore, IDIDCommMessage, IDIDCommMessageHandler, IDIDCommPayload, IDIDResolver, ISecretResolver } from "$lib/interfaces.js";
 import type { IJWE } from "@aviarytech/crypto";
+import type { IDIDDocument, IDIDDocumentServiceDescriptor } from "@aviarytech/dids";
 
 export class DIDComm implements IDIDComm {
   private messageBus: EventBus;
@@ -37,23 +38,31 @@ export class DIDComm implements IDIDComm {
     message: IDIDCommMessage,
     serviceId?: string
   ): Promise<boolean> {
-    const packedMsg = await this.core.packMessage(did, message.payload);
-    const didDoc = await this.didResolver.resolve(did);
-
-    const service = serviceId
-      ? didDoc.getServiceById(serviceId)
-      : didDoc.getServiceByType("DIDCommMessaging");
-    if (typeof service?.serviceEndpoint !== "string") {
-      throw Error("Only string service endpoints are supported");
+    let didDoc: IDIDDocument;
+    let packedMsg: IJWE;
+    let service: IDIDDocumentServiceDescriptor | undefined;
+    try {
+      packedMsg = await this.core.packMessage(did, message.payload);
+      didDoc = await this.didResolver.resolve(did);
+  
+    } catch (e: any) {
+      console.error(`Failed to resolve did ${did}:`, e.message)
+      return false;
     }
     try {
+      service = serviceId
+        ? didDoc.getServiceById(serviceId)
+        : didDoc.getServiceByType("DIDCommMessaging");
+      if (typeof service?.serviceEndpoint !== "string") {
+        throw Error("Only string service endpoints are supported");
+      }
       const resp = await axios.post(service.serviceEndpoint, packedMsg, {
         headers: { "Content-Type": DIDCOMM_MESSAGE_MEDIA_TYPE.ENCRYPTED },
       });
       return resp.status.toString().at(0) === '2';
     } catch (e: any) {
-      if (e.response.statusCode) console.error(`error sending didcomm message to ${service.serviceEndpoint}, received ${e.response.statusCode} - ${e.response.message}`);
-      else console.error(`error sending didcomm message to ${service.serviceEndpoint}\n`, `response data:`, e.response.data)
+      if (e.response.statusCode) console.error(`error sending didcomm message to ${service?.serviceEndpoint}, received ${e.response.statusCode} - ${e.response.message}`);
+      else console.error(`error sending didcomm message to ${service?.serviceEndpoint}\n`, `response data:`, e.response.data)
       return false;
     }
   }
