@@ -1,0 +1,5 @@
+- [ ] Propose
+- [ ] Offer
+- [ ] Request
+- [ ] Issue
+- [x] Ack

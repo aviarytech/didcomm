@@ -1,0 +1,5 @@
+export * from "$lib/protocols/issue-credential/messages/ack.js"
+export * from "$lib/protocols/issue-credential/messages/issue.js"
+export * from "$lib/protocols/issue-credential/messages/offer.js"
+export * from "$lib/protocols/issue-credential/messages/propose.js"
+export * from "$lib/protocols/issue-credential/messages/request.js"
