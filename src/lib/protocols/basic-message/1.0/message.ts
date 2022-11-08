@@ -11,7 +11,7 @@ export class BasicMessage implements IDIDCommMessage {
     from: string;
     thid: string;
     to?: string[];
-    created_time?: string;
+    created_time?: number;
     body: {
       content: string;
     };
@@ -26,7 +26,7 @@ export class BasicMessage implements IDIDCommMessage {
       type: BASIC_MESSAGE_TYPE,
       thid: thid ?? id,
       to,
-      created_time: new Date().toISOString(),
+      created_time: Date.now() / 1000,
       body: {
         content,
       },

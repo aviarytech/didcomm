@@ -1,1 +1,1 @@
-export * from "$lib/protocols/out-of-band/messages/invitation.js"
+export * from "$lib/protocols/out-of-band/2.0/invitation.js"

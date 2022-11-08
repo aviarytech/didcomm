@@ -26,8 +26,8 @@ export interface IDIDCommPayload {
   to?: string[];
   thid?: string;
   pthid?: string;
-  expires_time?: string;
-  created_time?: string;
+  expires_time?: number;
+  created_time?: number;
   next?: string;
   from_prior?: string;
   body: any;

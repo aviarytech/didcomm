@@ -1,1 +1,1 @@
-export * from "$lib/protocols/basic-message/messages/basic-message.js"
+export * from "$lib/protocols/basic-message/1.0/message.js"

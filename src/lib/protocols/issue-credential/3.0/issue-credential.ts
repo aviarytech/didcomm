@@ -2,17 +2,17 @@ import { nanoid } from "nanoid"
 import type { IDIDComm, IDIDCommMessage, IDIDCommMessageHandler } from "$lib/interfaces.js";
 import { sha256 } from "$lib/utils.js";
 
-export const ISSUE_CREDENTIAL_ACK_TYPE =
-  "https://didcomm.org/issue-credential/3.0/ack";
+export const ISSUE_CREDENTIAL_ISSUE_TYPE =
+  "https://didcomm.org/issue-credential/3.0/issue-credential";
 
-export class IssueCredentialAckMessage implements IDIDCommMessage {
+export class IssueCredentialIssueMessage implements IDIDCommMessage {
   payload: {
     id: string;
     type: string;
     from?: string;
     thid?: string;
     to?: string[];
-    created_time?: string;
+    created_time?: number;
     body: {};
   };
   repudiable = false;
@@ -26,21 +26,21 @@ export class IssueCredentialAckMessage implements IDIDCommMessage {
     this.payload = {
       id,
       from,
-      type: ISSUE_CREDENTIAL_ACK_TYPE,
+      type: ISSUE_CREDENTIAL_ISSUE_TYPE,
       thid,
       to,
-      created_time: new Date().toISOString(),
+      created_time: Date.now() / 1000,
       body: {}
     };
   }
 }
 
-export class IssueCredentialAckMessageHandler implements IDIDCommMessageHandler {
-  type = ISSUE_CREDENTIAL_ACK_TYPE;
-  callback: (msg: IssueCredentialAckMessage, didcomm: IDIDComm) => Promise<void>;
+export class IssueCredentialIssueMessageHandler implements IDIDCommMessageHandler {
+  type = ISSUE_CREDENTIAL_ISSUE_TYPE;
+  callback: (msg: IssueCredentialIssueMessage, didcomm: IDIDComm) => Promise<void>;
 
   constructor(
-    callback: (msg: IssueCredentialAckMessage, didcomm: IDIDComm) => Promise<void>
+    callback: (msg: IssueCredentialIssueMessage, didcomm: IDIDComm) => Promise<void>
   ) {
     this.callback = callback;
   }
@@ -50,7 +50,7 @@ export class IssueCredentialAckMessageHandler implements IDIDCommMessageHandler 
     didcomm: IDIDComm
   }): Promise<boolean> {
     console.log(
-      `Issue Credential - Ack Received: ${props.message.payload.id}, sent at ${props.message.payload.created_time}`
+      `Issue Credential - Issue Received: ${props.message.payload.id}, sent at ${props.message.payload.created_time}`
     );
     await this.callback(props.message, props.didcomm);
     return true;

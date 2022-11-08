@@ -1,7 +1,7 @@
 import type { IDIDComm, IDIDCommMessage, IDIDCommMessageHandler } from "$lib/interfaces.js";
 
 export const TRUST_PING_RESPONSE_PING_TYPE =
-  "https://didcomm.org/trust_ping/1.0/ping_response";
+  "https://didcomm.org/trust-ping/2.0/ping-response";
 
 export interface TrustPingResponseMessage extends IDIDCommMessage {
   payload: {
