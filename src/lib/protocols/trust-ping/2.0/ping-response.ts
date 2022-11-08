@@ -7,6 +7,7 @@ export interface TrustPingResponseMessage extends IDIDCommMessage {
   payload: {
     id: string;
     type: string;
+    created_time?: number;
     thid: string;
     from?: string;
     to?: string[];
