@@ -23,7 +23,7 @@ export class DIDComm implements IDIDComm {
   }
 
   handleMessage(message: IDIDCommMessage): boolean {
-    if (this.messageHandlers.find((h) => h.type === message.payload.type)) {
+    if (this.messageHandlers.find((h) => h.type === message.payload.type || h.type === "*")) {
       this.messageBus.dispatch(message.payload.type, {
         message,
         didcomm: this,
