@@ -33,7 +33,7 @@ export class RoutingForwardMessageHandler implements IDIDCommMessageHandler {
   async handle(props: {
     message: RoutingForwardMessage;
     didcomm: IDIDComm;
-  }): Promise<boolean> {
+  }): Promise<void> {
     const { message, didcomm } = props;
     const { payload } = message;
     console.log(
@@ -50,6 +50,5 @@ export class RoutingForwardMessageHandler implements IDIDCommMessageHandler {
         }
       }
     }
-    return true;
   }
 }

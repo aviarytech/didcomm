@@ -12,7 +12,7 @@ export class ProposePresentationMessage implements IDIDCommMessage {
     from: string;
     pthid: string;
     to: string[];
-    created_time?: string;
+    created_time?: number;
     body: {};
   };
   repudiable = false;
@@ -25,7 +25,7 @@ export class ProposePresentationMessage implements IDIDCommMessage {
       type: PROPOSE_PRESENTATION_TYPE,
       pthid,
       to,
-      created_time: new Date().toISOString(),
+      created_time: Date.now() / 1000,
       body: {},
     };
   }
@@ -45,11 +45,10 @@ export class ProposePresentationMessageHandler
   async handle(props: {
     message: any;
     didcomm: IDIDComm;
-  }): Promise<boolean> {
+  }): Promise<void> {
     console.log(
       `Propose Presentation Received: ${props.message.payload.id}, sent at ${props.message.payload.created_time}`
     );
     await this.callback(props.message, props.didcomm);
-    return true;
   }
 }

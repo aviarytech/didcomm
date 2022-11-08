@@ -117,7 +117,7 @@ export interface IDIDCommMessage {
 
 export interface IDIDCommMessageHandler {
   type: string;
-  handle: (props: { message: IDIDCommMessage, didcomm: IDIDComm}) => Promise<boolean>;
+  handle: (props: { message: IDIDCommMessage, didcomm: IDIDComm}) => Promise<void>;
 }
 
 export interface IDIDComm {

@@ -48,11 +48,10 @@ export class IssueCredentialOfferMessageHandler implements IDIDCommMessageHandle
   async handle(props: {
     message: any,
     didcomm: IDIDComm
-  }): Promise<boolean> {
+  }): Promise<void> {
     console.log(
       `Issue Credential - Offer Received: ${props.message.payload.id}, sent at ${props.message.payload.created_time}`
     );
     await this.callback(props.message, props.didcomm);
-    return true;
   }
 }

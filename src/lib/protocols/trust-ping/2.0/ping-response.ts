@@ -21,7 +21,6 @@ export class DefaultTrustPingResponseMessageHandler
   async handle(props: {
     message: IDIDCommMessage;
     didcomm: IDIDComm;
-  }): Promise<boolean> {
-    return true;
+  }): Promise<void> {
   }
 }

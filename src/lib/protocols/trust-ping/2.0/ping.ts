@@ -23,14 +23,13 @@ export class DefaultTrustPingMessageHandler implements IDIDCommMessageHandler {
   async handle(props: {
     message: TrustPingMessage;
     didcomm: IDIDComm;
-  }): Promise<boolean> {
+  }): Promise<void> {
     const { payload } = props.message;
     if (payload.body.response_requested) {
       if (!payload.from) {
         console.error(
           `Error in Trust Ping Protocol: response requested but "from" property not included`
         );
-        return false;
       }
       const responseMessage: TrustPingResponseMessage = {
         payload: {
@@ -41,8 +40,11 @@ export class DefaultTrustPingMessageHandler implements IDIDCommMessageHandler {
         },
         repudiable: false,
       };
-      return await props.didcomm.sendMessage(payload.from, responseMessage);
+      if (!payload.from) {
+        console.error(`No 'from' did found to to send trust ping response to`)
+      } else {
+        await props.didcomm.sendMessage(payload.from, responseMessage);
+      }
     }
-    return true;
   }
 }

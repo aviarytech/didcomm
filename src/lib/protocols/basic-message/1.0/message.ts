@@ -44,11 +44,10 @@ export class BasicMessageHandler implements IDIDCommMessageHandler {
     this.callback = callback;
   }
 
-  async handle(props: { message: IDIDCommMessage, didcomm: IDIDComm}): Promise<boolean> {
+  async handle(props: { message: IDIDCommMessage, didcomm: IDIDComm}): Promise<void> {
     console.log(
       `Basic Message Received: ${props.message.payload.id}, sent at ${props.message.payload.created_time}`
     );
     await this.callback(props.message, props.didcomm);
-    return true;
   }
 }

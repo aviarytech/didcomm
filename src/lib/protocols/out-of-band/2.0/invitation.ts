@@ -61,11 +61,10 @@ export class InvitationMessageHandler implements IDIDCommMessageHandler {
   async handle(props: {
     message: IDIDCommMessage,
     didcomm: IDIDComm
-  }): Promise<boolean> {
+  }): Promise<void> {
     console.log(
       `Out of Band Invitation Message Received: ${props.message.payload.id}, sent at ${props.message.payload.created_time}`
     );
     await this.callback(props.message, props.didcomm);
-    return true;
   }
 }
