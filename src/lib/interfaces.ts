@@ -121,7 +121,7 @@ export interface IDIDCommMessageHandler {
 }
 
 export interface IDIDComm {
-  handleMessage(message: IDIDCommMessage): boolean;
+  handleMessage(message: IDIDCommMessage): void;
   sendMessage: (did: string, message: IDIDCommMessage) => Promise<boolean>;
   receiveMessage(
     jwe: IJWE,

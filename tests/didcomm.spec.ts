@@ -61,7 +61,7 @@ test("didcomm can receive message w/ handler (success)", async () => {
       {
         type: "https://didcomm.org/test",
         handle: mockCallback,
-      },
+      }
     ],
     didResolver,
     secretResolver
@@ -76,7 +76,36 @@ test("didcomm can receive message w/ handler (success)", async () => {
   expect(mockCallback.mock.calls.length).toBe(1);
 });
 
-test("didcomm can't receive message w/o handler (fail)", async () => {
+test("didcomm can receive message w/ handler & wildcard handler (success)", async () => {
+  const secretResolver = new JSONSecretResolver(key1);
+  const mockCallback = vi.fn(async (m) => true);
+  const otherMockCallback = vi.fn(async (m) => true);
+  const didcomm = new DIDComm(
+    [
+      {
+        type: "https://didcomm.org/test",
+        handle: mockCallback,
+      },
+      {
+        type: "*",
+        handle: otherMockCallback
+      }
+    ],
+    didResolver,
+    secretResolver
+  );
+
+  const result = await didcomm.receiveMessage(
+    jwe1,
+    DIDCOMM_MESSAGE_MEDIA_TYPE.ENCRYPTED
+  );
+
+  expect(result).toBeTruthy();
+  expect(mockCallback.mock.calls.length).toBe(1);
+  expect(otherMockCallback.mock.calls.length).toBe(1);
+});
+
+test("didcomm can receive message w/o handler", async () => {
   const secretResolver = new JSONSecretResolver(key1);
   const didcomm = new DIDComm([], didResolver, secretResolver);
 
@@ -85,7 +114,7 @@ test("didcomm can't receive message w/o handler (fail)", async () => {
     DIDCOMM_MESSAGE_MEDIA_TYPE.ENCRYPTED
   );
 
-  expect(result).toBeFalsy();
+  expect(result).toBeTruthy();
 });
 
 test("didcomm can receive plaintext message w/ handler (success)", async () => {

@@ -22,15 +22,19 @@ export class DIDComm implements IDIDComm {
     });
   }
 
-  handleMessage(message: IDIDCommMessage): boolean {
-    if (this.messageHandlers.find((h) => h.type === message.payload.type || h.type === "*")) {
+  handleMessage(message: IDIDCommMessage): void {
+    if (this.messageHandlers.find((h) => h.type === message.payload.type)) {
       this.messageBus.dispatch(message.payload.type, {
         message,
         didcomm: this,
       });
-      return true;
     }
-    return false;
+    if (this.messageHandlers.find((h) => h.type === "*")) {
+      this.messageBus.dispatch("*", {
+        message,
+        didcomm: this
+      })
+    }
   }
 
   async sendMessage(
@@ -81,7 +85,8 @@ export class DIDComm implements IDIDComm {
         throw new Error(`Unsupported Media Type: ${mediaType}`);
       }
       console.log(`DIDComm received ${finalMessage.type} message`);
-      return this.handleMessage({ payload: finalMessage, repudiable: false });
+      this.handleMessage({ payload: finalMessage, repudiable: false });
+      return true;
     } catch (e: any) {
       console.error(e);
       throw e;
