@@ -12,20 +12,18 @@ const jwe0 = require("./fixtures/jwes/jwe0.json");
 const jwe1 = require("./fixtures/jwes/jwe1.json");
 
 let didResolver: any;
-vi.mock('axios', () => {
+
+vi.mock('cross-fetch', () => {
   return {
-    default: {
-      post: vi.fn().mockResolvedValue({ data: "OK", status: 200 })
-    }
+    default: vi
+      .fn()
+      .mockResolvedValueOnce({ data: "OK", status: 200 })
+      .mockResolvedValueOnce({ data: "NOT OK", status: 400 })
   }
 })
 
-beforeAll(() => {
+beforeEach(() => {
   didResolver = { resolve: vi.fn().mockResolvedValue(new DIDDocument(didDoc1)) }
-});
-
-afterEach(() => {
-  vi.resetAllMocks()
 });
 
 test("didcomm can send message to did", async () => {
@@ -38,6 +36,18 @@ test("didcomm can send message to did", async () => {
   });
 
   expect(res).toBeTruthy();
+});
+
+test("didcomm can not send message to did with 400", async () => {
+  const secretResolver = new JSONSecretResolver(key1);
+  const didcomm = new DIDComm([], didResolver, secretResolver);
+
+  const res = await didcomm.sendMessage("did:web:example.com", {
+    payload: document,
+    repudiable: false,
+  });
+
+  expect(res).toBeFalsy();
 });
 
 test("didcomm can't send message to did w/ no kaks", async () => {
@@ -55,7 +65,7 @@ test("didcomm can't send message to did w/ no kaks", async () => {
 
 test("didcomm can receive message w/ handler (success)", async () => {
   const secretResolver = new JSONSecretResolver(key1);
-  const mockCallback = vi.fn(async (m) => true);
+  const mockCallback = vi.fn(async (m) => {});
   const didcomm = new DIDComm(
     [
       {
@@ -78,8 +88,8 @@ test("didcomm can receive message w/ handler (success)", async () => {
 
 test("didcomm can receive message w/ handler & wildcard handler (success)", async () => {
   const secretResolver = new JSONSecretResolver(key1);
-  const mockCallback = vi.fn(async (m) => true);
-  const otherMockCallback = vi.fn(async (m) => true);
+  const mockCallback = vi.fn(async (m) => {});
+  const otherMockCallback = vi.fn(async (m) => {});
   const didcomm = new DIDComm(
     [
       {
@@ -119,7 +129,7 @@ test("didcomm can receive message w/o handler", async () => {
 
 test("didcomm can receive plaintext message w/ handler (success)", async () => {
   const secretResolver = new JSONSecretResolver(key1);
-  const mockCallback = vi.fn(async (m) => true);
+  const mockCallback = vi.fn(async (m) => {});
   const didcomm = new DIDComm(
     [
       {

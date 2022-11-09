@@ -1,4 +1,4 @@
-import axios from "axios"
+import fetch from 'cross-fetch';
 import { DIDCOMM_MESSAGE_MEDIA_TYPE } from "$lib/constants.js";
 import { DIDCommCore } from "$lib/core.js";
 import { EventBus } from "$lib/event-bus.js";
@@ -60,13 +60,22 @@ export class DIDComm implements IDIDComm {
       if (typeof service?.serviceEndpoint !== "string") {
         throw Error("Only string service endpoints are supported");
       }
-      const resp = await axios.post(service.serviceEndpoint, packedMsg, {
-        headers: { "Content-Type": DIDCOMM_MESSAGE_MEDIA_TYPE.ENCRYPTED },
+      const resp = await fetch(service.serviceEndpoint, {
+        method: 'POST',
+        mode: 'cors',
+        headers: {
+          'Content-Type': DIDCOMM_MESSAGE_MEDIA_TYPE.ENCRYPTED
+        },
+        body: JSON.stringify(packedMsg)
       });
-      return resp.status.toString().at(0) === '2';
+      console.log(resp)
+      if(resp.status.toString().at(0) === '2') {
+        return true;
+      }
+      return false;
     } catch (e: any) {
-      if (e.response.statusCode) console.error(`error sending didcomm message to ${service?.serviceEndpoint}, received ${e.response.statusCode} - ${e.response.message}`);
-      else console.error(`error sending didcomm message to ${service?.serviceEndpoint}\n`, `response data:`, e.response.data)
+      if (e.response) console.error(`error sending didcomm message to ${service?.serviceEndpoint}, received ${e.response.statusCode} - ${e.response.message}`);
+      else console.error(`error sending didcomm message to ${service?.serviceEndpoint}\n`, `response data:`, e.message)
       return false;
     }
   }
