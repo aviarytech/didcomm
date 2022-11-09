@@ -37,7 +37,7 @@
 	"type": "module",
 	"dependencies": {
 		"@aviarytech/crypto": "^0.0.40",
-		"@aviarytech/dids": "^0.1.7",
+		"@aviarytech/dids": "^0.1.9",
 		"@sphereon/pex": "^1.1.4",
 		"@sphereon/pex-models": "^1.1.0",
 		"axios": "^1.1.3",
