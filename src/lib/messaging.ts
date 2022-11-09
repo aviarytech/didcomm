@@ -68,7 +68,6 @@ export class DIDComm implements IDIDComm {
         },
         body: JSON.stringify(packedMsg)
       });
-      console.log(resp)
       if(resp.status.toString().at(0) === '2') {
         return true;
       }
