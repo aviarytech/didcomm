@@ -19,6 +19,8 @@ export interface RoutingForwardMessage extends IDIDCommMessage {
   };
 }
 
+export const createRoutingForwardMessage = (msg: RoutingForwardMessage) => msg;
+
 export class RoutingForwardMessageHandler implements IDIDCommMessageHandler {
   type = ROUTING_FORWARD_MESSAGE_TYPE;
   callback: (msg: IDIDCommMessage, didcomm: IDIDComm) => Promise<void>;

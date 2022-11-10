@@ -3,8 +3,10 @@ import { DIDCOMM_MESSAGE_MEDIA_TYPE } from "$lib/constants.js";
 import { DIDCommCore } from "$lib/core.js";
 import { EventBus } from "$lib/event-bus.js";
 import type { IDIDComm, IDIDCommCore, IDIDCommMessage, IDIDCommMessageHandler, IDIDCommPayload, IDIDResolver, ISecretResolver } from "$lib/interfaces.js";
-import type { IJWE } from "@aviarytech/crypto";
+import { sha256, type IJWE } from "@aviarytech/crypto";
 import type { IDIDDocument, IDIDDocumentServiceDescriptor } from "@aviarytech/dids";
+import { createRoutingForwardMessage, ROUTING_FORWARD_MESSAGE_TYPE } from '$lib/protocols/routing/2.0/forward.js';
+import { nanoid } from 'nanoid';
 
 export class DIDComm implements IDIDComm {
   private messageBus: EventBus;
@@ -37,7 +39,7 @@ export class DIDComm implements IDIDComm {
     }
   }
 
-  async sendPackedMessage(did: string, jwe: IJWE, serviceId?: string): Promise<boolean> {
+  async sendPackedMessage(did: string, jwe: IJWE, serviceId?: string, from?: string): Promise<boolean> {
     let didDoc: IDIDDocument;
     let service: IDIDDocumentServiceDescriptor | undefined;
     try {
@@ -50,8 +52,29 @@ export class DIDComm implements IDIDComm {
       service = serviceId
         ? didDoc.getServiceById(serviceId)
         : didDoc.getServiceByType("DIDCommMessaging");
-      if (typeof service?.serviceEndpoint !== "string") {
-        throw Error("Only string service endpoints are supported");
+      if (!service)
+        throw new Error(`service not found in ${did}`)
+      if (typeof service?.serviceEndpoint !== "string") 
+        throw new Error("Only string service endpoints are supported");
+      const routingKeys = service.routingKeys ?? []
+      for (let i = routingKeys.length - 1; i >= 0; i--) {
+        const next = i === routingKeys.length - 1 ? did : routingKeys[i+1]
+        const id = sha256(nanoid());
+        const fwd = createRoutingForwardMessage({
+          payload: {
+            id,
+            type: ROUTING_FORWARD_MESSAGE_TYPE,
+            from,
+            to: [routingKeys[i]],
+            created_time: Math.floor(Date.now() / 1000),
+            body: {
+              next
+            },
+            attachments: [{data: { json: jwe }}]
+          },
+          repudiable: false
+        })
+        jwe = await this.core.packMessage(routingKeys[i], fwd.payload);
       }
       const resp = await fetch(service.serviceEndpoint, {
         method: 'POST',
@@ -78,8 +101,9 @@ export class DIDComm implements IDIDComm {
     serviceId?: string
   ): Promise<boolean> {
     try {
+      const from = message.payload.from
       const packedMsg = await this.core.packMessage(did, message.payload);
-      return await this.sendPackedMessage(did, packedMsg, serviceId)
+      return await this.sendPackedMessage(did, packedMsg, serviceId, from)
     } catch (e: any) {
       console.error(e.message)
       return false;
