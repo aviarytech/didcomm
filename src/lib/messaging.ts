@@ -59,6 +59,10 @@ export class DIDComm implements IDIDComm {
       const routingKeys = service.routingKeys ?? []
       for (let i = routingKeys.length - 1; i >= 0; i--) {
         const next = i === routingKeys.length - 1 ? did : routingKeys[i+1]
+        if (next.startsWith('did:peer:')) {
+          // TODO configure and look up did:peer endpoints
+          return true;
+        }
         const id = sha256(nanoid());
         const fwd = createRoutingForwardMessage({
           payload: {
