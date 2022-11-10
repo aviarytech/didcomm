@@ -123,6 +123,7 @@ export interface IDIDCommMessageHandler {
 export interface IDIDComm {
   handleMessage(message: IDIDCommMessage): void;
   sendMessage: (did: string, message: IDIDCommMessage) => Promise<boolean>;
+  sendPackedMessage: (did: string, jwe: IJWE) => Promise<boolean>;
   receiveMessage(
     jwe: IJWE,
     mediaType: string

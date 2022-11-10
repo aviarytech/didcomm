@@ -1,6 +1,4 @@
-import type { IDIDComm, IDIDCommAttachment, IDIDCommMessage, IDIDCommMessageHandler } from "$lib/interfaces.js";
-import { sha256 } from "@aviarytech/crypto";
-import { TRUST_PING_RESPONSE_PING_TYPE, type TrustPingResponseMessage } from "$lib/protocols/trust-ping/2.0/ping-response.js";
+import type { IDIDComm, IDIDCommPayload, IDIDCommAttachment, IDIDCommMessage, IDIDCommMessageHandler } from "$lib/interfaces.js";
 
 
 export const ROUTING_FORWARD_MESSAGE_TYPE = "https://didcomm.org/routing/2.0/forward";
@@ -43,7 +41,9 @@ export class RoutingForwardMessageHandler implements IDIDCommMessageHandler {
       console.error(`Forward Message missing attachments`)
     } else {
       for (let i = 0; i < payload.attachments.length; i++) {
-        if (payload.attachments.at(i)?.data.json) {
+        const msg = payload.attachments.at(i)?.data.json
+        if (msg) {
+          await didcomm.sendMessage(payload.body.next, {payload: msg as IDIDCommPayload, repudiable: false})
           await this.callback(payload.attachments.at(i)?.data.json as any, didcomm)
         } else {
           console.error(`Forward message attachment didn't include 'json' field`)

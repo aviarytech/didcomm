@@ -37,18 +37,11 @@ export class DIDComm implements IDIDComm {
     }
   }
 
-  async sendMessage(
-    did: string,
-    message: IDIDCommMessage,
-    serviceId?: string
-  ): Promise<boolean> {
+  async sendPackedMessage(did: string, jwe: IJWE, serviceId?: string): Promise<boolean> {
     let didDoc: IDIDDocument;
-    let packedMsg: IJWE;
     let service: IDIDDocumentServiceDescriptor | undefined;
     try {
-      packedMsg = await this.core.packMessage(did, message.payload);
       didDoc = await this.didResolver.resolve(did);
-  
     } catch (e: any) {
       console.error(`Failed to resolve did ${did}:`, e.message)
       return false;
@@ -66,7 +59,7 @@ export class DIDComm implements IDIDComm {
         headers: {
           'Content-Type': DIDCOMM_MESSAGE_MEDIA_TYPE.ENCRYPTED
         },
-        body: JSON.stringify(packedMsg)
+        body: JSON.stringify(jwe)
       });
       if(resp.status.toString().at(0) === '2') {
         return true;
@@ -75,6 +68,20 @@ export class DIDComm implements IDIDComm {
     } catch (e: any) {
       if (e.response) console.error(`error sending didcomm message to ${service?.serviceEndpoint}, received ${e.response.statusCode} - ${e.response.message}`);
       else console.error(`error sending didcomm message to ${service?.serviceEndpoint}\n`, `response data:`, e.message)
+      return false;
+    }
+  }
+
+  async sendMessage(
+    did: string,
+    message: IDIDCommMessage,
+    serviceId?: string
+  ): Promise<boolean> {
+    try {
+      const packedMsg = await this.core.packMessage(did, message.payload);
+      return await this.sendPackedMessage(did, packedMsg, serviceId)
+    } catch (e: any) {
+      console.error(e.message)
       return false;
     }
   }
