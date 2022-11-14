@@ -1,5 +1,5 @@
 import { nanoid } from "nanoid"
-import type { IDIDComm, IDIDCommMessage, IDIDCommMessageHandler } from "$lib/interfaces.js";
+import type { IDIDComm, IDIDCommAttachment, IDIDCommMessage, IDIDCommMessageHandler } from "$lib/interfaces.js";
 import { sha256 } from "$lib/utils.js";
 
 export const ISSUE_CREDENTIAL_PROPOSE_TYPE =

@@ -15,7 +15,7 @@ export interface IDIDCommAttachment {
     hash?: string;
     links?: string[];
     base64?: string;
-    json?: object;
+    json?: any;
   };
 }
 

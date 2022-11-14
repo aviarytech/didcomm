@@ -1,5 +1,5 @@
 import { nanoid } from "nanoid"
-import type { IDIDComm, IDIDCommMessage, IDIDCommMessageHandler } from "$lib/interfaces.js";
+import type { IDIDComm, IDIDCommAttachment, IDIDCommMessage, IDIDCommMessageHandler } from "$lib/interfaces.js";
 import { sha256 } from "$lib/utils.js";
 
 export const ISSUE_CREDENTIAL_OFFER_TYPE =
@@ -14,6 +14,7 @@ export class IssueCredentialOfferMessage implements IDIDCommMessage {
     to?: string[];
     created_time?: number;
     body: {};
+    attachments: IDIDCommAttachment[]
   };
   repudiable = false;
 
@@ -30,7 +31,8 @@ export class IssueCredentialOfferMessage implements IDIDCommMessage {
       thid,
       to,
       created_time: Date.now() / 1000,
-      body: {}
+      body: {},
+      attachments: []
     };
   }
 }
