@@ -11,12 +11,15 @@ import { nanoid } from 'nanoid';
 export class DIDComm implements IDIDComm {
   private messageBus: EventBus;
   private core: IDIDCommCore;
+  private myURL: string;
 
   constructor(
     private messageHandlers: IDIDCommMessageHandler[],
     private didResolver: IDIDResolver,
-    private secretResolver: ISecretResolver
+    private secretResolver: ISecretResolver,
+    private myURL: string
   ) {
+    this.myURL = myURL
     this.core = new DIDCommCore(didResolver, secretResolver);
     this.messageBus = new EventBus();
     messageHandlers.forEach((handler) => {
@@ -59,10 +62,6 @@ export class DIDComm implements IDIDComm {
       const routingKeys = service.routingKeys ?? []
       for (let i = routingKeys.length - 1; i >= 0; i--) {
         const next = i === routingKeys.length - 1 ? did : routingKeys[i+1]
-        if (next.startsWith('did:peer:')) {
-          // TODO configure and look up did:peer endpoints
-          return true;
-        }
         const id = sha256(nanoid());
         const fwd = createRoutingForwardMessage({
           payload: {
@@ -79,6 +78,10 @@ export class DIDComm implements IDIDComm {
           repudiable: false
         })
         jwe = await this.core.packMessage(routingKeys[i], fwd.payload);
+      }
+      if (service.serviceEndpoint === this.myURL) {
+        console.log(`Not sending didcomm message to self`)
+        return true;
       }
       const resp = await fetch(service.serviceEndpoint, {
         method: 'POST',
