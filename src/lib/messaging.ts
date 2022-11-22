@@ -1,14 +1,9 @@
 import fetch from 'cross-fetch';
 import { DIDCOMM_MESSAGE_MEDIA_TYPE } from "$lib/constants.js";
-import { DIDCommCore } from "$lib/core.js";
 import { EventBus } from "$lib/event-bus.js";
-import type { IDIDComm, IDIDCommCore, IDIDCommMessage, IDIDCommMessageHandler, IDIDCommPayload, IDIDResolver, ISecretResolver } from "$lib/interfaces.js";
-import { sha256, type IJWE } from "@aviarytech/crypto";
-import type { IDIDDocument, IDIDDocumentServiceDescriptor } from "@aviarytech/dids";
-import { createRoutingForwardMessage, ROUTING_FORWARD_MESSAGE_TYPE } from '$lib/protocols/routing/2.0/forward.js';
-import { nanoid } from 'nanoid';
+import type { IDIDComm, IDIDCommMessage, IDIDCommMessageHandler, IDIDCommPayload, IDIDResolver, ISecretResolver } from "$lib/interfaces.js";
 import { Message, type DIDDoc, type DIDResolver, type PackEncryptedMetadata, type SecretsResolver, type Service } from 'didcomm-node';
-import { DIDCommDIDResolver, DIDCommSecretResolver } from './mapped-resolvers';
+import { DIDCommDIDResolver, DIDCommSecretResolver } from '$lib/mapped-resolvers.js';
 
 export class DIDComm implements IDIDComm {
   private messageBus: EventBus;
