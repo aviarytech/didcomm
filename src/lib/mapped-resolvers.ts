@@ -31,12 +31,15 @@ export const DIDCommDIDResolver = (didResolver: IDIDResolver) => ({
   }
 })
 
-export const DIDCommSecretResolver = (secretResolver: ISecretResolver) => {
-  async function get_secret(id: string): Promise<Secret | null> {
-    const doc = await secretResolver.resolve(id)
+export class DIDCommSecretResolver {
+  constructor(private secretResolver: ISecretResolver) {}
+
+  async get_secret(id: string): Promise<Secret | null> {
+    const doc = await this.secretResolver.resolve(id)
     if (doc) {
       let format = doc.type === 'JsonWebKey2020' ? 'JWK' : doc.type === 'X25519KeyAgreementKey2019' || doc.type === 'Ed25519VerificationKey2018' ? 'Base58' : doc.type === 'X25519KeyAgreementKey2020' || doc.type === 'Ed25519VerificationKey2020' ? 'Multibase' : doc.type;
       let value = format === 'JWK' ? doc.privateKeyJwk : format === 'Base58' ? doc.privateKeyBase58 : format === 'Multibase' ? doc.privateKeyMultibase : null;
+      console.error(doc.id)
       return {
         id: doc.id,
         type: doc.type,
@@ -49,18 +52,14 @@ export const DIDCommSecretResolver = (secretResolver: ISecretResolver) => {
     return null;
   }
 
-  async function find_secrets(ids: string[]): Promise<string[]> {
+  async find_secrets(ids: string[]): Promise<string[]> {
     let secrets = [];
     for (let i = 0; i < ids.length; i++) {
-      const secret = await get_secret(ids[i])
+      const secret = await this.get_secret(ids[i])
       if (secret) {
         secrets.push(secret.secret_material.value)
       }
     }
     return secrets;
-  }
-  return {
-    get_secret,
-    find_secrets
   }
 }

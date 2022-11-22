@@ -1,0 +1,6 @@
+{
+	"id": "did:example:bob#key-1",
+	"type": "X25519KeyAgreementKey2019",
+	"publicKeyBase58": "3zSE11h82KtPYPj8p9cTgzr6yDWFYEsfM19xc1K5vjKY",
+	"privateKeyBase58": "66pGmEHd7fBfQa9ap27vWSouHAmipbmmw6GduBwNRY6y"
+}

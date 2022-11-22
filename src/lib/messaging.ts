@@ -25,7 +25,7 @@ export class DIDComm implements IDIDComm {
   ) {
     this.myURL = _myURL
     this.didResolver = DIDCommDIDResolver(_didResolver);
-    this.secretResolver = DIDCommSecretResolver(_secretResolver);
+    this.secretResolver = new DIDCommSecretResolver(_secretResolver);
     // this.core = new DIDCommCore(didResolver, secretResolver);
     this.messageBus = new EventBus();
     messageHandlers.forEach((handler) => {
@@ -136,7 +136,6 @@ export class DIDComm implements IDIDComm {
       );
       // const packedMsg = await this.core.packMessage(did, message.payload);
       return await this.sendPackedMessage(did, encryptedMsg, encryptMetadata, serviceId, from)
-      return true;
     } catch (e: any) {
       console.error(e.message)
       return false;
@@ -151,7 +150,6 @@ export class DIDComm implements IDIDComm {
     try {
       if (mediaType === DIDCOMM_MESSAGE_MEDIA_TYPE.ENCRYPTED) {
         const [unpackedMsg, unpackMetadata] = await Message.unpack(msg, this.didResolver, this.secretResolver, {})
-        console.log(unpackedMsg)
         // finalMessage = unpackedMsg
         // finalMessage = await this.core.unpackMessage(msg as IJWE, mediaType);
       } else if (mediaType === DIDCOMM_MESSAGE_MEDIA_TYPE.PLAIN) {
@@ -164,7 +162,7 @@ export class DIDComm implements IDIDComm {
       return true;
     } catch (e: any) {
       console.error(e);
-      throw e;
+      return false;
     }
   }
 }
