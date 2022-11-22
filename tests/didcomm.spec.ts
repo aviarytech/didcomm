@@ -63,7 +63,7 @@ test("didcomm can't send message to did w/ no kaks", async () => {
   expect(res).toBeFalsy()
 });
 
-test("didcomm can receive message w/ handler (success)", async () => {
+test.only("didcomm can receive message w/ handler (success)", async () => {
   const secretResolver = new JSONSecretResolver(key1);
   const mockCallback = vi.fn(async (m) => {});
   const didcomm = new DIDComm(
@@ -76,9 +76,9 @@ test("didcomm can receive message w/ handler (success)", async () => {
     didResolver,
     secretResolver
   );
-
+    console.log(typeof jwe1)
   const result = await didcomm.receiveMessage(
-    jwe1,
+    JSON.stringify(jwe1),
     DIDCOMM_MESSAGE_MEDIA_TYPE.ENCRYPTED
   );
 
