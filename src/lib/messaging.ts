@@ -7,17 +7,23 @@ import { sha256, type IJWE } from "@aviarytech/crypto";
 import type { IDIDDocument, IDIDDocumentServiceDescriptor } from "@aviarytech/dids";
 import { createRoutingForwardMessage, ROUTING_FORWARD_MESSAGE_TYPE } from '$lib/protocols/routing/2.0/forward.js';
 import { nanoid } from 'nanoid';
+import { Message, type DIDDoc, type DIDResolver, type PackEncryptedMetadata, type SecretsResolver, type Service } from 'didcomm-node';
+import { DIDCommDIDResolver, DIDCommSecretResolver } from './mapped-resolvers';
 
 export class DIDComm implements IDIDComm {
   private messageBus: EventBus;
-  private core: IDIDCommCore;
+  // private core: IDIDCommCore;
+  private didResolver: DIDResolver;
+  private secretResolver: SecretsResolver;
 
   constructor(
     private messageHandlers: IDIDCommMessageHandler[],
-    private didResolver: IDIDResolver,
-    private secretResolver: ISecretResolver
+    _didResolver: IDIDResolver,
+    _secretResolver: ISecretResolver
   ) {
-    this.core = new DIDCommCore(didResolver, secretResolver);
+    this.didResolver = DIDCommDIDResolver(_didResolver);
+    this.secretResolver = DIDCommSecretResolver(_secretResolver);
+    // this.core = new DIDCommCore(didResolver, secretResolver);
     this.messageBus = new EventBus();
     messageHandlers.forEach((handler) => {
       this.messageBus.register(handler.type, handler);
@@ -39,9 +45,10 @@ export class DIDComm implements IDIDComm {
     }
   }
 
-  async sendPackedMessage(did: string, jwe: IJWE, serviceId?: string, from?: string): Promise<boolean> {
-    let didDoc: IDIDDocument;
-    let service: IDIDDocumentServiceDescriptor | undefined;
+  async sendPackedMessage(did: string, jwe: string, metadata: PackEncryptedMetadata, serviceId?: string, from?: string): Promise<boolean> {
+    let didDoc: DIDDoc | null;
+    let service: Service | undefined;
+    let serviceEndpoint: string;
     try {
       didDoc = await this.didResolver.resolve(did);
     } catch (e: any) {
@@ -50,51 +57,54 @@ export class DIDComm implements IDIDComm {
     }
     try {
       service = serviceId
-        ? didDoc.getServiceById(serviceId)
-        : didDoc.getServiceByType("DIDCommMessaging");
-      if (!service)
-        throw new Error(`service not found in ${did}`)
-      if (typeof service?.serviceEndpoint !== "string") 
-        throw new Error("Only string service endpoints are supported");
-      const routingKeys = service.routingKeys ?? []
-      for (let i = routingKeys.length - 1; i >= 0; i--) {
-        const next = i === routingKeys.length - 1 ? did : routingKeys[i+1]
-        if (next.startsWith('did:peer:')) {
-          // TODO configure and look up did:peer endpoints
-          return true;
-        }
-        const id = sha256(nanoid());
-        const fwd = createRoutingForwardMessage({
-          payload: {
-            id,
-            type: ROUTING_FORWARD_MESSAGE_TYPE,
-            from,
-            to: [routingKeys[i]],
-            created_time: Math.floor(Date.now() / 1000),
-            body: {
-              next
-            },
-            attachments: [{data: { json: jwe }}]
-          },
-          repudiable: false
-        })
-        jwe = await this.core.packMessage(routingKeys[i], fwd.payload);
-      }
-      const resp = await fetch(service.serviceEndpoint, {
+        ? didDoc?.services.find(s => s.id === serviceId)
+        : didDoc?.services && didDoc.services.length > 0 ? didDoc?.services[0] : undefined
+      // if (!service)
+      serviceEndpoint = (service?.kind as any).DIDCommMessaging.service_endpoint
+      // const routingKeys = (service?.kind as any).DIDCommMessaging.routingKeys ?? []
+      // for (let i = routingKeys.length - 1; i >= 0; i--) {
+      //     const next = i === routingKeys.length - 1 ? did : routingKeys[i+1]
+      //     if (next.startsWith('did:peer:')) {
+      //       // TODO configure and look up did:peer endpoints
+      //       return true;
+      //     }
+
+      //       // const id = sha256(nanoid());
+      //       // const fwd = createRoutingForwardMessage({
+      //       //     payload: {
+      //       //         id,
+      //       //         type: ROUTING_FORWARD_MESSAGE_TYPE,
+      //       //         from,
+      //       //         to: [routingKeys[i]],
+      //       //         created_time: Math.floor(Date.now() / 1000),
+      //       //         body: {
+      //       //             next
+      //       //           },
+      //       //           attachments: [{data: { json: jwe }}]
+      //       //         },
+      //       //         repudiable: false
+      //       //       })
+      //       //       jwe = await this.core.packMessage(routingKeys[i], fwd.payload);
+      //       //     }
+      //           // throw new Error(`service not found in ${did}`)
+      // }
+      if (!serviceEndpoint) 
+        throw new Error("service endpoint not found");
+      const resp = await fetch(serviceEndpoint, {
         method: 'POST',
         mode: 'cors',
         headers: {
           'Content-Type': DIDCOMM_MESSAGE_MEDIA_TYPE.ENCRYPTED
         },
-        body: JSON.stringify(jwe)
+        body: jwe
       });
       if(resp.status.toString().at(0) === '2') {
         return true;
       }
       return false;
     } catch (e: any) {
-      if (e.response) console.error(`error sending didcomm message to ${service?.serviceEndpoint}, received ${e.response.statusCode} - ${e.response.message}`);
-      else console.error(`error sending didcomm message to ${service?.serviceEndpoint}\n`, `response data:`, e.message)
+      if (e.response) console.error(`error sending didcomm message to ${metadata.messaging_service?.service_endpoint}, received ${e.response.statusCode} - ${e.response.message}`);
+      else console.error(`error sending didcomm message to ${metadata.messaging_service?.service_endpoint}\n`, `response data:`, e.message)
       return false;
     }
   }
@@ -106,8 +116,24 @@ export class DIDComm implements IDIDComm {
   ): Promise<boolean> {
     try {
       const from = message.payload.from
-      const packedMsg = await this.core.packMessage(did, message.payload);
-      return await this.sendPackedMessage(did, packedMsg, serviceId, from)
+      const msg = new Message({
+        typ: 'application/didcomm-plain+json',
+        ...message.payload
+      });
+
+      const [encryptedMsg, encryptMetadata] = await msg.pack_encrypted(
+        did,
+        from ?? null,
+        from ?? null,
+        this.didResolver,
+        this.secretResolver,
+        {
+          forward: false // TODO: should be true by default
+        }
+      );
+      // const packedMsg = await this.core.packMessage(did, message.payload);
+      return await this.sendPackedMessage(did, encryptedMsg, encryptMetadata, serviceId, from)
+      return true;
     } catch (e: any) {
       console.error(e.message)
       return false;
@@ -115,20 +141,23 @@ export class DIDComm implements IDIDComm {
   }
 
   async receiveMessage(
-    msg: IJWE | IDIDCommPayload,
+    msg: string,
     mediaType: string
   ): Promise<boolean> {
     let finalMessage: IDIDCommPayload;
     try {
       if (mediaType === DIDCOMM_MESSAGE_MEDIA_TYPE.ENCRYPTED) {
-        finalMessage = await this.core.unpackMessage(msg as IJWE, mediaType);
+        const [unpackedMsg, unpackMetadata] = await Message.unpack(msg, this.didResolver, this.secretResolver, {})
+        console.log(unpackedMsg)
+        // finalMessage = unpackedMsg
+        // finalMessage = await this.core.unpackMessage(msg as IJWE, mediaType);
       } else if (mediaType === DIDCOMM_MESSAGE_MEDIA_TYPE.PLAIN) {
-        finalMessage = msg as IDIDCommPayload;
+        // finalMessage = msg as IDIDCommPayload;
       } else {
         throw new Error(`Unsupported Media Type: ${mediaType}`);
       }
-      console.log(`DIDComm received ${finalMessage.type} message`);
-      this.handleMessage({ payload: finalMessage, repudiable: false });
+      // console.log(`DIDComm received ${finalMessage.type} message`);
+      // this.handleMessage({ payload: finalMessage, repudiable: false });
       return true;
     } catch (e: any) {
       console.error(e);
