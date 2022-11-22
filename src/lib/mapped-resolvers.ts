@@ -39,7 +39,6 @@ export class DIDCommSecretResolver {
     if (doc) {
       let format = doc.type === 'JsonWebKey2020' ? 'JWK' : doc.type === 'X25519KeyAgreementKey2019' || doc.type === 'Ed25519VerificationKey2018' ? 'Base58' : doc.type === 'X25519KeyAgreementKey2020' || doc.type === 'Ed25519VerificationKey2020' ? 'Multibase' : doc.type;
       let value = format === 'JWK' ? doc.privateKeyJwk : format === 'Base58' ? doc.privateKeyBase58 : format === 'Multibase' ? doc.privateKeyMultibase : null;
-      console.error(doc.id)
       return {
         id: doc.id,
         type: doc.type,
@@ -57,7 +56,7 @@ export class DIDCommSecretResolver {
     for (let i = 0; i < ids.length; i++) {
       const secret = await this.get_secret(ids[i])
       if (secret) {
-        secrets.push(secret.secret_material.value)
+        secrets.push(secret.id)
       }
     }
     return secrets;

@@ -64,7 +64,7 @@ test("didcomm can't send message to did w/ no kaks", async () => {
   expect(res).toBeFalsy()
 });
 
-test.only("didcomm can receive message w/ handler (success)", async () => {
+test("didcomm can receive message w/ handler (success)", async () => {
   const secretResolver = new JSONSecretResolver(bob);
   const spy = vi.spyOn(secretResolver, 'resolve')
   const mockCallback = vi.fn(async (m) => {});
@@ -90,7 +90,7 @@ test.only("didcomm can receive message w/ handler (success)", async () => {
 });
 
 test("didcomm can receive message w/ handler & wildcard handler (success)", async () => {
-  const secretResolver = new JSONSecretResolver(key1);
+  const secretResolver = new JSONSecretResolver(bob);
   const mockCallback = vi.fn(async (m) => {});
   const otherMockCallback = vi.fn(async (m) => {});
   const didcomm = new DIDComm(
@@ -104,13 +104,13 @@ test("didcomm can receive message w/ handler & wildcard handler (success)", asyn
         handle: otherMockCallback
       }
     ],
-    didResolver,
+    mockDidResolver,
     secretResolver,
     'http://example.com'
   );
 
   const result = await didcomm.receiveMessage(
-    jwe2,
+    JSON.stringify(jwe0),
     DIDCOMM_MESSAGE_MEDIA_TYPE.ENCRYPTED
   );
 
@@ -120,11 +120,11 @@ test("didcomm can receive message w/ handler & wildcard handler (success)", asyn
 });
 
 test("didcomm can receive message w/o handler", async () => {
-  const secretResolver = new JSONSecretResolver(key1);
-  const didcomm = new DIDComm([], didResolver, secretResolver, 'http://example.com');
+  const secretResolver = new JSONSecretResolver(bob);
+  const didcomm = new DIDComm([], mockDidResolver, secretResolver, 'http://example.com');
 
   const result = await didcomm.receiveMessage(
-    jwe1,
+    JSON.stringify(jwe0),
     DIDCOMM_MESSAGE_MEDIA_TYPE.ENCRYPTED
   );
 
@@ -132,7 +132,7 @@ test("didcomm can receive message w/o handler", async () => {
 });
 
 test("didcomm can receive plaintext message w/ handler (success)", async () => {
-  const secretResolver = new JSONSecretResolver(key1);
+  const secretResolver = new JSONSecretResolver(bob);
   const mockCallback = vi.fn(async (m) => {});
   const didcomm = new DIDComm(
     [
@@ -141,13 +141,13 @@ test("didcomm can receive plaintext message w/ handler (success)", async () => {
         handle: mockCallback,
       },
     ],
-    didResolver,
+    mockDidResolver,
     secretResolver,
     'http://example.com'
   );
 
   const result = await didcomm.receiveMessage(
-    { type: "https://didcomm.org/test", id: "123", body: {} },
+    JSON.stringify({ type: "https://didcomm.org/test", id: "123", body: {} }),
     DIDCOMM_MESSAGE_MEDIA_TYPE.PLAIN
   );
 

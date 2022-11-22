@@ -48,7 +48,7 @@ export class DIDComm implements IDIDComm {
     }
   }
 
-  async sendPackedMessage(did: string, jwe: string, metadata: PackEncryptedMetadata, serviceId?: string, from?: string): Promise<boolean> {
+  async sendPackedMessage(did: string, jwe: string, metadata: PackEncryptedMetadata, serviceId?: string): Promise<boolean> {
     let didDoc: DIDDoc | null;
     let service: Service | undefined;
     let serviceEndpoint: string;
@@ -134,8 +134,7 @@ export class DIDComm implements IDIDComm {
           forward: false // TODO: should be true by default
         }
       );
-      // const packedMsg = await this.core.packMessage(did, message.payload);
-      return await this.sendPackedMessage(did, encryptedMsg, encryptMetadata, serviceId, from)
+      return await this.sendPackedMessage(did, encryptedMsg, encryptMetadata, serviceId)
     } catch (e: any) {
       console.error(e.message)
       return false;
@@ -150,15 +149,14 @@ export class DIDComm implements IDIDComm {
     try {
       if (mediaType === DIDCOMM_MESSAGE_MEDIA_TYPE.ENCRYPTED) {
         const [unpackedMsg, unpackMetadata] = await Message.unpack(msg, this.didResolver, this.secretResolver, {})
-        // finalMessage = unpackedMsg
-        // finalMessage = await this.core.unpackMessage(msg as IJWE, mediaType);
+        finalMessage = unpackedMsg.as_value()
       } else if (mediaType === DIDCOMM_MESSAGE_MEDIA_TYPE.PLAIN) {
-        // finalMessage = msg as IDIDCommPayload;
+        finalMessage = JSON.parse(msg);
       } else {
         throw new Error(`Unsupported Media Type: ${mediaType}`);
       }
-      // console.log(`DIDComm received ${finalMessage.type} message`);
-      // this.handleMessage({ payload: finalMessage, repudiable: false });
+      console.log(`DIDComm received ${finalMessage.type} message`);
+      this.handleMessage({ payload: finalMessage, repudiable: false });
       return true;
     } catch (e: any) {
       console.error(e);
