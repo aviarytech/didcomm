@@ -32,7 +32,7 @@ export class RequestPresentationMessage implements IDIDCommMessage {
       type: REQUEST_PRESENTATION_TYPE,
       thid,
       to,
-      created_time: Date.now() / 1000,
+      created_time: Math.floor(Date.now() / 1000),
       body: {},
       attachments,
     };

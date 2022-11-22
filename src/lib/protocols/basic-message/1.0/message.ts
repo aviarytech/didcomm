@@ -26,7 +26,7 @@ export class BasicMessage implements IDIDCommMessage {
       type: BASIC_MESSAGE_TYPE,
       thid: thid ?? id,
       to,
-      created_time: Date.now() / 1000,
+      created_time: Math.floor(Date.now() / 1000),
       body: {
         content,
       },
