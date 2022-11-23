@@ -141,6 +141,7 @@ export class DIDComm implements IDIDComm {
     mediaType: string
   ): Promise<boolean> {
     let finalMessage: IDIDCommPayload;
+    msg = typeof msg === 'object' ? JSON.stringify(msg) : msg;
     try {
       if (mediaType === DIDCOMM_MESSAGE_MEDIA_TYPE.ENCRYPTED) {
         const [unpackedMsg, unpackMetadata] = await Message.unpack(msg, this.didResolver, this.secretResolver, {})
