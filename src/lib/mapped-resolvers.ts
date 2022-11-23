@@ -17,6 +17,11 @@ export const DIDCommDIDResolver = (didResolver: IDIDResolver) => ({
         verification_methods: doc.verificationMethod?.map(v => {
           let format = v.type === 'JsonWebKey2020' ? 'JWK' : v.type === 'X25519KeyAgreementKey2019' || v.type === 'Ed25519VerificationKey2018' ? 'Base58' : v.type === 'X25519KeyAgreementKey2020' || v.type === 'Ed25519VerificationKey2020' ? 'Multibase' : v.type;
           let value = format === 'JWK' ? v.publicKeyJwk : format === 'Base58' ? v.publicKeyBase58 : format === 'Multibase' ? v.publicKeyMultibase : null;
+          if (value === 'Multibase') {
+            /* hopefully only temporarily need to convert to base58.. see https://github.com/sicpa-dlab/didcomm-rust/issues/95 */
+            format = 'Base58'
+            value = multibase.toBase58(value)
+          }
           return {
           id: v.id,
           type: v.type,
