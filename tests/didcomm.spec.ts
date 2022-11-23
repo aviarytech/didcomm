@@ -23,8 +23,8 @@ vi.mock('cross-fetch', () => {
   }
 })
 
-test("didcomm can send message to did", async () => {
-  const secretResolver = new JSONSecretResolver(alice);
+test.only("didcomm can send message to did", async () => {
+  const secretResolver = new JSONSecretResolver([alice, bob]);
   const didcomm = new DIDComm([], mockDidResolver, secretResolver, "http://example.com");
   const spy = vi.spyOn(didcomm, 'sendPackedMessage')
 

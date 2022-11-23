@@ -1,3 +1,4 @@
+import { multibase } from "@aviarytech/crypto"
 import type { IDIDResolver, ISecretResolver } from "@aviarytech/dids"
 import type { DIDDoc, Secret } from "didcomm-node"
 
@@ -39,6 +40,11 @@ export class DIDCommSecretResolver {
     if (doc) {
       let format = doc.type === 'JsonWebKey2020' ? 'JWK' : doc.type === 'X25519KeyAgreementKey2019' || doc.type === 'Ed25519VerificationKey2018' ? 'Base58' : doc.type === 'X25519KeyAgreementKey2020' || doc.type === 'Ed25519VerificationKey2020' ? 'Multibase' : doc.type;
       let value = format === 'JWK' ? doc.privateKeyJwk : format === 'Base58' ? doc.privateKeyBase58 : format === 'Multibase' ? doc.privateKeyMultibase : null;
+      if (value === 'Multibase') {
+        /* hopefully only temporarily need to convert to base58.. see https://github.com/sicpa-dlab/didcomm-rust/issues/95 */
+        format = 'Base58'
+        value = multibase.toBase58(value)
+      }
       return {
         id: doc.id,
         type: doc.type,

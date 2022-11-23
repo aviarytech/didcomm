@@ -2,12 +2,11 @@ import fetch from 'cross-fetch';
 import { DIDCOMM_MESSAGE_MEDIA_TYPE } from "$lib/constants.js";
 import { EventBus } from "$lib/event-bus.js";
 import type { IDIDComm, IDIDCommMessage, IDIDCommMessageHandler, IDIDCommPayload, IDIDResolver, ISecretResolver } from "$lib/interfaces.js";
-import { Message, type DIDDoc, type DIDResolver, type PackEncryptedMetadata, type SecretsResolver, type Service } from 'didcomm-node';
+import type { DIDDoc, DIDResolver, PackEncryptedMetadata, SecretsResolver, Service } from 'didcomm-node';
 import { DIDCommDIDResolver, DIDCommSecretResolver } from '$lib/mapped-resolvers.js';
 
 export class DIDComm implements IDIDComm {
   private messageBus: EventBus;
-  // private core: IDIDCommCore;
   private myURL: string;
   private didResolver: DIDResolver;
   private secretResolver: SecretsResolver;
@@ -21,7 +20,6 @@ export class DIDComm implements IDIDComm {
     this.myURL = _myURL
     this.didResolver = DIDCommDIDResolver(_didResolver);
     this.secretResolver = new DIDCommSecretResolver(_secretResolver);
-    // this.core = new DIDCommCore(didResolver, secretResolver);
     this.messageBus = new EventBus();
     messageHandlers.forEach((handler) => {
       this.messageBus.register(handler.type, handler);
@@ -113,16 +111,18 @@ export class DIDComm implements IDIDComm {
     serviceId?: string
   ): Promise<boolean> {
     try {
+      let didcomm = typeof self === 'undefined' ? await import('didcomm-node') : await import('didcomm')
+      // Not currently using from (only doing anoncrypt)
       const from = message.payload.from
-      const msg = new Message({
+      const msg = new didcomm.Message({
         typ: 'application/didcomm-plain+json',
         ...message.payload
       });
 
       const [encryptedMsg, encryptMetadata] = await msg.pack_encrypted(
         did,
-        from ?? null,
-        from ?? null,
+        null,
+        null,
         this.didResolver,
         this.secretResolver,
         {
@@ -140,11 +140,12 @@ export class DIDComm implements IDIDComm {
     msg: string,
     mediaType: string
   ): Promise<boolean> {
+    let didcomm = typeof self === 'undefined' ? await import('didcomm-node') : await import('didcomm')
     let finalMessage: IDIDCommPayload;
     msg = typeof msg === 'object' ? JSON.stringify(msg) : msg;
     try {
       if (mediaType === DIDCOMM_MESSAGE_MEDIA_TYPE.ENCRYPTED) {
-        const [unpackedMsg, unpackMetadata] = await Message.unpack(msg, this.didResolver, this.secretResolver, {})
+        const [unpackedMsg, unpackMetadata] = await didcomm.Message.unpack(msg, this.didResolver, this.secretResolver, {})
         finalMessage = unpackedMsg.as_value()
       } else if (mediaType === DIDCOMM_MESSAGE_MEDIA_TYPE.PLAIN) {
         finalMessage = JSON.parse(msg);
