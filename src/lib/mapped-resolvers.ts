@@ -15,11 +15,18 @@ export const DIDCommDIDResolver = (didResolver: IDIDResolver) => ({
           routing_keys: typeof s === 'string' ? [] : s.routingKeys
         }}})) ?? [],
         verification_methods: doc.verificationMethod?.map(v => {
-          let format = v.type === 'JsonWebKey2020' ? 'JWK' : v.type === 'X25519KeyAgreementKey2019' || v.type === 'Ed25519VerificationKey2018' ? 'Base58' : v.type === 'X25519KeyAgreementKey2020' || v.type === 'Ed25519VerificationKey2020' ? 'Multibase' : v.type;
+          let type = v.type;
+          let format = type === 'JsonWebKey2020' ? 'JWK' : type === 'X25519KeyAgreementKey2019' || type === 'Ed25519VerificationKey2018' ? 'Base58' : type === 'X25519KeyAgreementKey2020' || type === 'Ed25519VerificationKey2020' ? 'Multibase' : type;
           let value = format === 'JWK' ? v.publicKeyJwk : format === 'Base58' ? v.publicKeyBase58 : format === 'Multibase' ? v.publicKeyMultibase : null;
+          if (format === 'Multibase') {
+            /* hopefully only temporarily need to convert to base58.. see https://github.com/sicpa-dlab/didcomm-rust/issues/95 */
+            format = 'Base58'
+            type = type === 'X25519KeyAgreementKey2020' ?  'X25519KeyAgreementKey2019' : 'Ed25519VerificationKey2018';
+            value = multibase.toBase58(value as string)
+          }
           return {
             id: v.id,
-            type: v.type,
+            type,
             controller: v.controller,
             verification_material: {
               format,
@@ -39,16 +46,18 @@ export class DIDCommSecretResolver {
   async get_secret(id: string): Promise<Secret | null> {
     const doc = await this.secretResolver.resolve(id)
     if (doc) {
-      let format = doc.type === 'JsonWebKey2020' ? 'JWK' : doc.type === 'X25519KeyAgreementKey2019' || doc.type === 'Ed25519VerificationKey2018' ? 'Base58' : doc.type === 'X25519KeyAgreementKey2020' || doc.type === 'Ed25519VerificationKey2020' ? 'Multibase' : doc.type;
+      let type = doc.type;
+      let format = type === 'JsonWebKey2020' ? 'JWK' : type === 'X25519KeyAgreementKey2019' || type === 'Ed25519VerificationKey2018' ? 'Base58' : type === 'X25519KeyAgreementKey2020' || type === 'Ed25519VerificationKey2020' ? 'Multibase' : type;
       let value = format === 'JWK' ? doc.privateKeyJwk : format === 'Base58' ? doc.privateKeyBase58 : format === 'Multibase' ? doc.privateKeyMultibase : null;
       if (format === 'Multibase') {
         /* hopefully only temporarily need to convert to base58.. see https://github.com/sicpa-dlab/didcomm-rust/issues/95 */
         format = 'Base58'
         value = multibase.toBase58(value)
+        type = type === 'X25519KeyAgreementKey2020' ?  'X25519KeyAgreementKey2019' : 'Ed25519VerificationKey2018';
       }
       return {
         id: doc.id,
-        type: doc.type,
+        type,
         secret_material: {
           format,
           value
