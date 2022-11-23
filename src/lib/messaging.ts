@@ -126,7 +126,7 @@ export class DIDComm implements IDIDComm {
         this.didResolver,
         this.secretResolver,
         {
-          forward: false // TODO: should be true by default
+          forward: true
         }
       );
       return await this.sendPackedMessage(did, encryptedMsg, encryptMetadata, serviceId)
