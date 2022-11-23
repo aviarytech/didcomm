@@ -25,7 +25,7 @@ export class ProposePresentationMessage implements IDIDCommMessage {
       type: PROPOSE_PRESENTATION_TYPE,
       pthid,
       to,
-      created_time: Date.now() / 1000,
+      created_time: Math.floor(Date.now() / 1000),
       body: {},
     };
   }

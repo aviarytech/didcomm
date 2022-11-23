@@ -36,7 +36,7 @@ export class DefaultTrustPingMessageHandler implements IDIDCommMessageHandler {
         payload: {
           id: sha256(payload.id),
           thid: payload.id,
-          created_time: Date.now() / 1000,
+          created_time: Math.floor(Date.now() / 1000),
           type: TRUST_PING_RESPONSE_PING_TYPE,
           body: {}
         },

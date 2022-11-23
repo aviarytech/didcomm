@@ -30,7 +30,7 @@ export class IssueCredentialOfferMessage implements IDIDCommMessage {
       type: ISSUE_CREDENTIAL_OFFER_TYPE,
       thid,
       to,
-      created_time: Date.now() / 1000,
+      created_time: Math.floor(Date.now() / 1000),
       body: {},
       attachments: []
     };

@@ -1,6 +1,7 @@
 {
-  "id": "123",
-  "to": "did:web:example.com",
-  "type": "https://didcomm.org/test",
-  "body": { "msg": "test" }
+	"id": "123",
+	"to": ["did:example:bob"],
+	"from": "did:example:alice",
+	"type": "https://didcomm.org/test",
+	"body": { "msg": "test" }
 }

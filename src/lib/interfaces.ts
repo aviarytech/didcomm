@@ -1,6 +1,8 @@
 import type { IJWE, IJWS, JsonWebKey2020 } from "@aviarytech/crypto";
 import type { DIDCOMM_MESSAGE_MEDIA_TYPE } from "$lib/constants.js";
 import type { IDIDDocument } from "@aviarytech/dids";
+import type { Attachment } from "didcomm-node";
+import type { PackEncryptedMetadata } from 'didcomm-node';
 
 export interface IDIDCommAttachment {
   id?: string;
@@ -31,7 +33,7 @@ export interface IDIDCommPayload {
   next?: string;
   from_prior?: string;
   body: any;
-  attachments?: IDIDCommAttachment[];
+  attachments?: Attachment[];
 }
 
 export interface IDIDCommCore {
@@ -123,9 +125,9 @@ export interface IDIDCommMessageHandler {
 export interface IDIDComm {
   handleMessage(message: IDIDCommMessage): void;
   sendMessage: (did: string, message: IDIDCommMessage) => Promise<boolean>;
-  sendPackedMessage: (did: string, jwe: IJWE) => Promise<boolean>;
+  sendPackedMessage: (did: string, jwe: string, metadata: PackEncryptedMetadata, serviceId?: string) => Promise<boolean>;
   receiveMessage(
-    jwe: IJWE,
+    msg: string,
     mediaType: string
   ): Promise<boolean>;
 }

@@ -26,7 +26,7 @@ export class InvitationMessage implements IDIDCommMessage {
     goal_code?: string,
     goal?: string
   ) {
-    const created = Date.now() / 1000;
+    const created = Math.floor(Date.now() / 1000);
     this.payload = {
       id: sha256(from + INVITATION_MESSAGE_TYPE + created),
       type: INVITATION_MESSAGE_TYPE,
