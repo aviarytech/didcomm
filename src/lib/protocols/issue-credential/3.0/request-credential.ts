@@ -1,6 +1,6 @@
 import { nanoid } from "nanoid"
 import type { IDIDComm, IDIDCommAttachment, IDIDCommMessage, IDIDCommMessageHandler } from "$lib/interfaces.js";
-import { sha256 } from "$lib/utils.js";
+import { sha256 } from "@aviarytech/crypto";
 
 export const ISSUE_CREDENTIAL_REQUEST_TYPE =
   "https://didcomm.org/issue-credential/3.0/request-credential";

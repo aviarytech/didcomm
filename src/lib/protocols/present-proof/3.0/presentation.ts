@@ -1,6 +1,6 @@
 import { nanoid } from "nanoid"
 import type { IDIDComm, IDIDCommMessage, IDIDCommMessageHandler } from "$lib/interfaces.js";
-import { sha256 } from "$lib/utils.js";
+import { sha256 } from "@aviarytech/crypto";
 import type { IDIFPresentationExchangeSubmissionAttachment }from "../interfaces.js";
 
 export const PRESENTATION_TYPE =
