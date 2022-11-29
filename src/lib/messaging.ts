@@ -41,7 +41,7 @@ export class DIDComm implements IDIDComm {
     }
   }
 
-  async sendPackedMessage(did: string, jwe: string, metadata: PackEncryptedMetadata, serviceId?: string): Promise<boolean> {
+  async sendPackedMessage(did: string, jwe: string, serviceId?: string): Promise<boolean> {
     let didDoc: DIDDoc | null;
     let service: Service | undefined;
     let serviceEndpoint: string;
@@ -55,37 +55,13 @@ export class DIDComm implements IDIDComm {
       service = serviceId
         ? didDoc?.services.find(s => s.id === serviceId)
         : didDoc?.services && didDoc.services.length > 0 ? didDoc?.services[0] : undefined
-      // if (!service)
       serviceEndpoint = (service?.kind as any).DIDCommMessaging.service_endpoint
-      // const routingKeys = (service?.kind as any).DIDCommMessaging.routingKeys ?? []
-      // for (let i = routingKeys.length - 1; i >= 0; i--) {
-      //     const next = i === routingKeys.length - 1 ? did : routingKeys[i+1]
-      //     if (next.startsWith('did:peer:')) {
-      //       // TODO configure and look up did:peer endpoints
-      //       return true;
-      //     }
-
-      //       // const id = sha256(nanoid());
-      //       // const fwd = createRoutingForwardMessage({
-      //       //     payload: {
-      //       //         id,
-      //       //         type: ROUTING_FORWARD_MESSAGE_TYPE,
-      //       //         from,
-      //       //         to: [routingKeys[i]],
-      //       //         created_time: Math.floor(Date.now() / 1000),
-      //       //         body: {
-      //       //             next
-      //       //           },
-      //       //           attachments: [{data: { json: jwe }}]
-      //       //         },
-      //       //         repudiable: false
-      //       //       })
-      //       //       jwe = await this.core.packMessage(routingKeys[i], fwd.payload);
-      //       //     }
-      //           // throw new Error(`service not found in ${did}`)
-      // }
       if (!serviceEndpoint) 
         throw new Error("service endpoint not found");
+      if (serviceEndpoint === this.myURL) {
+        console.log('Not sending didcomm message to my own endpoint')
+        return true;
+      }
       const resp = await fetch(serviceEndpoint, {
         method: 'POST',
         mode: 'cors',
@@ -99,8 +75,7 @@ export class DIDComm implements IDIDComm {
       }
       return false;
     } catch (e: any) {
-      if (e.response) console.error(`error sending didcomm message to ${metadata.messaging_service?.service_endpoint}, received ${e.response.statusCode} - ${e.response.message}`);
-      else console.error(`error sending didcomm message to ${metadata.messaging_service?.service_endpoint}\n`, `response data:`, e.message)
+      console.error(e.message)
       return false;
     }
   }
@@ -129,7 +104,7 @@ export class DIDComm implements IDIDComm {
           forward: true
         }
       );
-      return await this.sendPackedMessage(did, encryptedMsg, encryptMetadata, serviceId)
+      return await this.sendPackedMessage(did, encryptedMsg, serviceId)
     } catch (e: any) {
       console.error(e.message)
       return false;

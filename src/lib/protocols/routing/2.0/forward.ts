@@ -1,5 +1,4 @@
-import type { IDIDComm, IDIDCommPayload, IDIDCommAttachment, IDIDCommMessage, IDIDCommMessageHandler } from "$lib/interfaces.js";
-import type { IJWE } from "@aviarytech/crypto";
+import type { IDIDComm, IDIDCommAttachment, IDIDCommMessage, IDIDCommMessageHandler } from "$lib/interfaces.js";
 
 
 export const ROUTING_FORWARD_MESSAGE_TYPE = "https://didcomm.org/routing/2.0/forward";
@@ -47,8 +46,8 @@ export class RoutingForwardMessageHandler implements IDIDCommMessageHandler {
         const msg = payload.attachments.at(i)?.data.json
         if (msg) {
           console.log(`Forwarding message to ${payload.body.next}`)
-          await didcomm.sendPackedMessage(payload.body.next, msg as IJWE)
-          await this.callback(payload.attachments.at(i)?.data.json as any, didcomm)
+          await didcomm.sendPackedMessage(payload.body.next, JSON.stringify(msg))
+          await this.callback(msg as any, didcomm)
         } else {
           console.error(`Forward message attachment didn't include 'json' field`)
         }
