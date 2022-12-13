@@ -21,10 +21,10 @@ export const createShortenedURLInvalidateMessage = (msg: ShortenedURLInvalidateM
 
 export class ShortenedURLInvalidateMessageHandler implements IDIDCommMessageHandler {
   type = SHORTENED_URL_INVALIDATE_TYPE;
-  callback: (msg: IDIDCommMessage, didcomm: IDIDComm) => Promise<void>;
+  callback: (message: ShortenedURLInvalidateMessage, didcomm: IDIDComm) => Promise<void>;
 
   constructor(
-    callback: (payload: IDIDCommMessage, didcomm: IDIDComm) => Promise<void>
+    callback: (message: ShortenedURLInvalidateMessage, didcomm: IDIDComm) => Promise<void>
   ) {
     this.callback = callback;
   }

@@ -125,6 +125,7 @@ export interface IDIDCommMessageHandler {
 export interface IDIDComm {
   handleMessage(message: IDIDCommMessage): void;
   sendMessage: (did: string, message: IDIDCommMessage) => Promise<boolean>;
+  packMessage: (did: string, message: IDIDCommMessage) => Promise<string>;
   sendPackedMessage: (did: string, jwe: string, serviceId?: string) => Promise<boolean>;
   receiveMessage(
     msg: string,

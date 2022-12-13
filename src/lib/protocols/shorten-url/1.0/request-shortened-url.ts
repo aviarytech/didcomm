@@ -24,10 +24,10 @@ export const createRequestShortenedURLMessage = (msg: RequestShortenedURLMessage
 
 export class RequestShortenedURLMessageHandler implements IDIDCommMessageHandler {
   type = SHORTENED_URL_REQUEST_TYPE;
-  callback: (msg: IDIDCommMessage, didcomm: IDIDComm) => Promise<void>;
+  callback: (message: RequestShortenedURLMessage, didcomm: IDIDComm) => Promise<void>;
 
   constructor(
-    callback: (payload: IDIDCommMessage, didcomm: IDIDComm) => Promise<void>
+    callback: (message: RequestShortenedURLMessage, didcomm: IDIDComm) => Promise<void>
   ) {
     this.callback = callback;
   }

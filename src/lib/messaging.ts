@@ -86,29 +86,35 @@ export class DIDComm implements IDIDComm {
     serviceId?: string
   ): Promise<boolean> {
     try {
-      let didcomm = typeof self === 'undefined' ? await import('didcomm-node') : await import('didcomm')
-      // Not currently using from (only doing anoncrypt)
-      const from = message.payload.from
-      const msg = new didcomm.Message({
-        typ: 'application/didcomm-plain+json',
-        ...message.payload
-      });
-
-      const [encryptedMsg, encryptMetadata] = await msg.pack_encrypted(
-        did,
-        null,
-        null,
-        this.didResolver,
-        this.secretResolver,
-        {
-          forward: true
-        }
-      );
+      const encryptedMsg = await this.packMessage(did, message)
       return await this.sendPackedMessage(did, encryptedMsg, serviceId)
     } catch (e: any) {
       console.error(e.message)
       return false;
     }
+  }
+
+  async packMessage(
+    did: string,
+    message: IDIDCommMessage
+  ): Promise<string> {
+    let didcomm = typeof self === 'undefined' ? await import('didcomm-node') : await import('didcomm')
+    const msg = new didcomm.Message({
+      typ: 'application/didcomm-plain+json',
+      ...message.payload
+    });
+
+    const [encryptedMsg, encryptMetadata] = await msg.pack_encrypted(
+      did,
+      null,
+      null,
+      this.didResolver,
+      this.secretResolver,
+      {
+        forward: true
+      }
+    );
+    return encryptedMsg
   }
 
   async receiveMessage(
