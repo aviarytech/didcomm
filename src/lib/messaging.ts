@@ -27,17 +27,17 @@ export class DIDComm implements IDIDComm {
   }
 
   handleMessage(message: IDIDCommMessage): void {
-    if (this.messageHandlers.find((h) => h.type === message.payload.type)) {
-      this.messageBus.dispatch(message.payload.type, {
-        message,
-        didcomm: this,
-      });
-    }
     if (this.messageHandlers.find((h) => h.type === "*")) {
       this.messageBus.dispatch("*", {
         message,
         didcomm: this
       })
+    }
+    if (this.messageHandlers.find((h) => h.type === message.payload.type)) {
+      this.messageBus.dispatch(message.payload.type, {
+        message,
+        didcomm: this,
+      });
     }
   }
 
