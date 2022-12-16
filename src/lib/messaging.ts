@@ -2,11 +2,14 @@ import fetch from 'cross-fetch';
 import { DIDCOMM_MESSAGE_MEDIA_TYPE } from "$lib/constants.js";
 import { EventBus } from "$lib/event-bus.js";
 import type { IDIDComm, IDIDCommMessage, IDIDCommMessageHandler, IDIDCommPayload, IDIDResolver, ISecretResolver } from "$lib/interfaces.js";
-import type { DIDDoc, DIDResolver, PackEncryptedMetadata, SecretsResolver, Service } from 'didcomm-node';
+import type { DIDDoc, DIDResolver, SecretsResolver, Service } from 'didcomm-node';
 import { DIDCommDIDResolver, DIDCommSecretResolver } from '$lib/mapped-resolvers.js';
+import { DIDCommThreads } from './threads';
 
 export class DIDComm implements IDIDComm {
+  public threads: DIDCommThreads;
   private messageBus: EventBus;
+  private sendingHooksBus: EventBus;
   private myURL: string;
   private didResolver: DIDResolver;
   private secretResolver: SecretsResolver;
@@ -17,12 +20,17 @@ export class DIDComm implements IDIDComm {
     _secretResolver: ISecretResolver,
     _myURL: string
   ) {
-    this.myURL = _myURL
+    this.threads = new DIDCommThreads();
+    this.myURL = _myURL;
     this.didResolver = DIDCommDIDResolver(_didResolver);
     this.secretResolver = new DIDCommSecretResolver(_secretResolver);
     this.messageBus = new EventBus();
+    this.sendingHooksBus = new EventBus();
     messageHandlers.forEach((handler) => {
       this.messageBus.register(handler.type, handler);
+      if (handler.sendingHook) {
+        this.sendingHooksBus.register(handler.type, { handle: handler.sendingHook })
+      }
     });
   }
 
@@ -86,6 +94,12 @@ export class DIDComm implements IDIDComm {
     serviceId?: string
   ): Promise<boolean> {
     try {
+      if (this.messageHandlers.find((h) => h.type === message.payload.type)) {
+        this.sendingHooksBus.dispatch(message.payload.type, {
+          message,
+          didcomm: this,
+        });
+      }
       const encryptedMsg = await this.packMessage(did, message)
       return await this.sendPackedMessage(did, encryptedMsg, serviceId)
     } catch (e: any) {

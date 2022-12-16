@@ -23,5 +23,7 @@ export class DefaultTrustPingResponseMessageHandler
     message: IDIDCommMessage;
     didcomm: IDIDComm;
   }): Promise<void> {
+
+    props.didcomm.threads.removeThread(props.message.payload.thid)
   }
 }

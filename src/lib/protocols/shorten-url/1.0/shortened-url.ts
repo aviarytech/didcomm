@@ -9,6 +9,7 @@ export interface ShortenedURLMessage extends IDIDCommMessage {
     type: string;
     from?: string;
     to?: string[];
+    thid?: string;
     created_time?: number;
     expires_time?: number;
     body: {
@@ -41,5 +42,6 @@ export class ShortenedURLMessageHandler implements IDIDCommMessageHandler {
     );
 
     await this.callback(message, didcomm)
+    didcomm.threads.removeThread(message.payload.thid)
   }
 }

@@ -3,6 +3,7 @@ import type { DIDCOMM_MESSAGE_MEDIA_TYPE } from "$lib/constants.js";
 import type { IDIDDocument } from "@aviarytech/dids";
 import type { Attachment } from "didcomm-node";
 import type { PackEncryptedMetadata } from 'didcomm-node';
+import type { DIDCommThreads } from "./threads";
 
 export interface IDIDCommAttachment {
   id?: string;
@@ -119,10 +120,12 @@ export interface IDIDCommMessage {
 
 export interface IDIDCommMessageHandler {
   type: string;
+  sendingHook?: (props: { message: IDIDCommMessage, didcomm: IDIDComm}) => Promise<void>;
   handle: (props: { message: IDIDCommMessage, didcomm: IDIDComm}) => Promise<void>;
 }
 
 export interface IDIDComm {
+  threads: DIDCommThreads;
   handleMessage(message: IDIDCommMessage): void;
   sendMessage: (did: string, message: IDIDCommMessage) => Promise<boolean>;
   packMessage: (did: string, message: IDIDCommMessage) => Promise<string>;

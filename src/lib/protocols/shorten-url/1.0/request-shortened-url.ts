@@ -32,6 +32,15 @@ export class RequestShortenedURLMessageHandler implements IDIDCommMessageHandler
     this.callback = callback;
   }
 
+  async sendingHook(props: {
+    message: RequestShortenedURLMessage,
+    didcomm: IDIDComm
+  }): Promise<void> {
+    if(props.message.payload.to?.length) {
+      props.didcomm.threads.addThread(props.message.payload.id, props.message.payload.to[0])
+    }
+  }
+
   async handle(props: {
     message: RequestShortenedURLMessage;
     didcomm: IDIDComm;

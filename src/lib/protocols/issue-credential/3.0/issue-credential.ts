@@ -1,6 +1,7 @@
 import { nanoid } from "nanoid"
 import type { IDIDComm, IDIDCommAttachment, IDIDCommMessage, IDIDCommMessageHandler } from "$lib/interfaces.js";
 import { sha256 } from "@aviarytech/crypto";
+import type { Attachment } from "didcomm-node";
 
 export const ISSUE_CREDENTIAL_ISSUE_TYPE =
   "https://didcomm.org/issue-credential/3.0/issue-credential";
@@ -14,7 +15,7 @@ export class IssueCredentialIssueMessage implements IDIDCommMessage {
     to?: string[];
     created_time?: number;
     body: {};
-    attachments: IDIDCommAttachment[]
+    attachments: Attachment[]
   };
   repudiable = false;
 

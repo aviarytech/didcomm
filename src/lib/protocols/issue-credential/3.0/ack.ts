@@ -45,6 +45,13 @@ export class IssueCredentialAckMessageHandler implements IDIDCommMessageHandler 
     this.callback = callback;
   }
 
+  async sendingHook(props: {
+    message: any,
+    didcomm: IDIDComm
+  }): Promise<void> {
+    props.didcomm.threads.removeThread(props.message.thid)
+  }
+
   async handle(props: {
     message: any,
     didcomm: IDIDComm
@@ -53,5 +60,6 @@ export class IssueCredentialAckMessageHandler implements IDIDCommMessageHandler 
       `Issue Credential - Ack Received: ${props.message.payload.id}, sent at ${props.message.payload.created_time}`
     );
     await this.callback(props.message, props.didcomm);
+    props.didcomm.threads.removeThread(props.message.thid)
   }
 }

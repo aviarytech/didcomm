@@ -1,6 +1,7 @@
 import { nanoid } from "nanoid"
-import type { IDIDComm, IDIDCommAttachment, IDIDCommMessage, IDIDCommMessageHandler } from "$lib/interfaces.js";
+import type { IDIDComm, IDIDCommMessage, IDIDCommMessageHandler } from "$lib/interfaces.js";
 import { sha256 } from "@aviarytech/crypto";
+import type { Attachment } from "didcomm-node";
 
 export const ISSUE_CREDENTIAL_REQUEST_TYPE =
   "https://didcomm.org/issue-credential/3.0/request-credential";
@@ -14,7 +15,7 @@ export class IssueCredentialRequestMessage implements IDIDCommMessage {
     to?: string[];
     created_time?: number;
     body: {};
-    attachments: IDIDCommAttachment[]
+    attachments: Attachment[]
   };
   repudiable = false;
 
@@ -45,6 +46,12 @@ export class IssueCredentialRequestMessageHandler implements IDIDCommMessageHand
     callback: (msg: IssueCredentialRequestMessage, didcomm: IDIDComm) => Promise<void>
   ) {
     this.callback = callback;
+  }
+
+  async sendingHook(props: { message: IDIDCommMessage; didcomm: IDIDComm; }) {
+    if(!props.message.payload.thid && props.message.payload.to?.length) {
+      props.didcomm.threads.addThread(props.message.payload.id, props.message.payload.to[0])
+    }
   }
 
   async handle(props: {

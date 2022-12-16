@@ -21,6 +21,15 @@ export interface TrustPingMessage extends IDIDCommMessage {
 export class DefaultTrustPingMessageHandler implements IDIDCommMessageHandler {
   type = TRUST_PING_PING_TYPE;
 
+  async sendingHook(props: {
+    message: TrustPingMessage;
+    didcomm: IDIDComm;
+  }): Promise<void> {
+    if(props.message.payload.to?.length && props.message.payload.body.response_requested) {
+      props.didcomm.threads.addThread(props.message.payload.id, props.message.payload.to[0])
+    }
+  }
+
   async handle(props: {
     message: TrustPingMessage;
     didcomm: IDIDComm;

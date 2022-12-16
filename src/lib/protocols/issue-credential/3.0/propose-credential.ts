@@ -1,5 +1,5 @@
 import { nanoid } from "nanoid"
-import type { IDIDComm, IDIDCommAttachment, IDIDCommMessage, IDIDCommMessageHandler } from "$lib/interfaces.js";
+import type { IDIDComm, IDIDCommMessage, IDIDCommMessageHandler } from "$lib/interfaces.js";
 import { sha256 } from "@aviarytech/crypto";
 
 export const ISSUE_CREDENTIAL_PROPOSE_TYPE =
@@ -43,6 +43,12 @@ export class IssueCredentialProposeMessageHandler implements IDIDCommMessageHand
     callback: (msg: IssueCredentialProposeMessage, didcomm: IDIDComm) => Promise<void>
   ) {
     this.callback = callback;
+  }
+
+  async sendingHook(props: { message: IDIDCommMessage; didcomm: IDIDComm; }) {
+    if(props.message.payload.to?.length) {
+      props.didcomm.threads.addThread(props.message.payload.id, props.message.payload.to[0])
+    }
   }
 
   async handle(props: {
