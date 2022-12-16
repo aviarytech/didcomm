@@ -4,7 +4,7 @@ import { EventBus } from "$lib/event-bus.js";
 import type { IDIDComm, IDIDCommMessage, IDIDCommMessageHandler, IDIDCommPayload, IDIDResolver, ISecretResolver } from "$lib/interfaces.js";
 import type { DIDDoc, DIDResolver, SecretsResolver, Service } from 'didcomm-node';
 import { DIDCommDIDResolver, DIDCommSecretResolver } from '$lib/mapped-resolvers.js';
-import { DIDCommThreads } from './threads';
+import { DIDCommThreads } from './threads.js';
 
 export class DIDComm implements IDIDComm {
   public threads: DIDCommThreads;
