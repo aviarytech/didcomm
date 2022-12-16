@@ -25,8 +25,8 @@ export class DefaultTrustPingMessageHandler implements IDIDCommMessageHandler {
     message: TrustPingMessage;
     didcomm: IDIDComm;
   }): Promise<void> {
-    if(props.message.payload.to?.length && props.message.payload.body.response_requested) {
-      props.didcomm.threads.addThread(props.message.payload.id, props.message.payload.to[0])
+    if(props.message.payload.from && props.message.payload.body.response_requested) {
+      props.didcomm.threads.addThread(props.message.payload.id, props.message.payload.from)
     }
   }
 

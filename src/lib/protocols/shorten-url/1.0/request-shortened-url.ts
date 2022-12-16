@@ -36,8 +36,8 @@ export class RequestShortenedURLMessageHandler implements IDIDCommMessageHandler
     message: RequestShortenedURLMessage,
     didcomm: IDIDComm
   }): Promise<void> {
-    if(props.message.payload.to?.length) {
-      props.didcomm.threads.addThread(props.message.payload.id, props.message.payload.to[0])
+    if(props.message.payload.from) {
+      props.didcomm.threads.addThread(props.message.payload.id, props.message.payload.from)
     }
   }
 

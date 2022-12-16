@@ -49,8 +49,9 @@ export class IssueCredentialRequestMessageHandler implements IDIDCommMessageHand
   }
 
   async sendingHook(props: { message: IDIDCommMessage; didcomm: IDIDComm; }) {
-    if(!props.message.payload.thid && props.message.payload.to?.length) {
-      props.didcomm.threads.addThread(props.message.payload.id, props.message.payload.to[0])
+    const { payload } = props.message;
+    if(!payload.thid && payload.to?.length && payload.from) {
+      props.didcomm.threads.addThread(payload.id, payload.from)
     }
   }
 
