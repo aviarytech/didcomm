@@ -18,11 +18,6 @@ export class DIDCommThreads {
   }
 
   removeThread = (id: string | undefined) => {
-    if (id) {
-      const idx = this.threads.findIndex(t => t.id === id)
-      if (idx >= 0) {
-        this.threads = [...this.threads.splice(idx, 1)]
-      }
-    }
+    this.threads = this.threads.filter(t => t.id === id)
   }
 }
