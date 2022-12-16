@@ -18,7 +18,9 @@ export class DIDCommThreads {
   }
 
   addThread = (id: string, me: string) => {
-    this.threads = [...this.threads, {id, me}]
+    if (this.threads.findIndex(t => t.id === id) < 0) {
+      this.threads = [...this.threads, {id, me}]
+    }
   }
 
   removeThread = (id: string | undefined) => {
