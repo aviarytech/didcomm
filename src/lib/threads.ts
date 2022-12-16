@@ -9,6 +9,10 @@ export class DIDCommThreads {
     return this.threads.length
   }
 
+  get all() {
+    return this.threads;
+  }
+
   getThreadById = (id: string): {id: string, me: string} | null => {
     return this.threads.find(t => t.id === id) ?? null
   }
