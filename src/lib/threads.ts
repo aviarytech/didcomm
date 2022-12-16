@@ -5,6 +5,10 @@ export class DIDCommThreads {
     this.threads = [];
   }
 
+  get length() {
+    return this.threads.length
+  }
+
   getThreadById = (id: string): {id: string, me: string} | null => {
     return this.threads.find(t => t.id === id) ?? null
   }
