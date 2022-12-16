@@ -18,6 +18,6 @@ export class DIDCommThreads {
   }
 
   removeThread = (id: string | undefined) => {
-    this.threads = this.threads.filter(t => t.id === id)
+    this.threads = this.threads.filter(t => t.id !== id)
   }
 }
