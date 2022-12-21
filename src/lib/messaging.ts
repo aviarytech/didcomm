@@ -13,6 +13,8 @@ export class DIDComm implements IDIDComm {
   private myURL: string;
   private didResolver: DIDResolver;
   private secretResolver: SecretsResolver;
+  private messagesReceived: string[];
+  private messagesSent: string[];
 
   constructor(
     private messageHandlers: IDIDCommMessageHandler[],
@@ -26,6 +28,8 @@ export class DIDComm implements IDIDComm {
     this.secretResolver = new DIDCommSecretResolver(_secretResolver);
     this.messageBus = new EventBus();
     this.sendingHooksBus = new EventBus();
+    this.messagesSent = [];
+    this.messagesSent = [];
     messageHandlers.forEach((handler) => {
       this.messageBus.register(handler.type, handler);
       if (handler.sendingHook) {
@@ -36,16 +40,22 @@ export class DIDComm implements IDIDComm {
 
   handleMessage(message: IDIDCommMessage): void {
     if (this.messageHandlers.find((h) => h.type === "*")) {
+      // Always handle wildcard handlers
       this.messageBus.dispatch("*", {
         message,
         didcomm: this
       })
     }
     if (this.messageHandlers.find((h) => h.type === message.payload.type)) {
-      this.messageBus.dispatch(message.payload.type, {
-        message,
-        didcomm: this,
-      });
+      if (!this.messagesReceived.includes(message.payload.id)) {
+        this.messagesReceived = [message.payload.id, ...this.messagesReceived];
+        this.messageBus.dispatch(message.payload.type, {
+          message,
+          didcomm: this,
+        });
+      } else {
+        console.error(`attempted to handle duplicate message: ${message.payload.id}`)
+      }
     }
   }
 
@@ -96,6 +106,7 @@ export class DIDComm implements IDIDComm {
     serviceId?: string
   ): Promise<boolean> {
     try {
+      this.messagesSent = [message.payload.id, ...this.messagesSent];
       if (this.messageHandlers.find((h) => h.type === message.payload.type)) {
         this.sendingHooksBus.dispatch(message.payload.type, {
           message,
