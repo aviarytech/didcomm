@@ -81,6 +81,8 @@ export class DIDComm implements IDIDComm {
       if(resp.status.toString().at(0) === '2') {
         return true;
       }
+      console.error(`Failed to send message to ${serviceEndpoint}, status: ${resp.status}`)
+      console.error(resp.statusText)
       return false;
     } catch (e: any) {
       console.error(e.message)
