@@ -146,7 +146,8 @@ export class DIDComm implements IDIDComm {
 
   async receiveMessage(
     msg: string,
-    mediaType: string
+    mediaType: string,
+    allowReplay = false
   ): Promise<boolean> {
     let didcomm = typeof self === 'undefined' ? await import('didcomm-node') : await import('didcomm')
     let finalMessage: IDIDCommPayload;
@@ -159,6 +160,9 @@ export class DIDComm implements IDIDComm {
         finalMessage = JSON.parse(msg);
       } else {
         throw new Error(`Unsupported Media Type: ${mediaType}`);
+      }
+      if (allowReplay) {
+        this.messagesReceived = [...this.messagesReceived.filter(m => m !== finalMessage.id)]
       }
       console.log(`DIDComm received ${finalMessage.type} message`);
       this.handleMessage({ payload: finalMessage, repudiable: false });
