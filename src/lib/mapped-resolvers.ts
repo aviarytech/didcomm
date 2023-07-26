@@ -1,4 +1,3 @@
-import { multibase } from "@aviarytech/crypto"
 import type { IDIDResolver, ISecretResolver } from "@aviarytech/dids"
 import type { DIDDoc, Secret } from "didcomm-node"
 
@@ -6,29 +5,32 @@ export const DIDCommDIDResolver = (didResolver: IDIDResolver) => ({
   resolve: async (did: string): Promise<DIDDoc | null> => {
     const doc = await didResolver.resolve(did)
     if (doc) {
-      return {
-        did: doc.id,
-        key_agreements: doc.keyAgreement?.map(k => typeof k === 'string' ? k : k.id) ?? [],
-        authentications: doc.authentication?.map(k => typeof k === 'string' ? k :k.id) ?? [],
-        services: doc.service?.map(s => ({id: typeof s === 'string' ? s : s.id, kind: {DIDCommMessaging: {
-          service_endpoint: typeof s === 'string' ? s : s.serviceEndpoint,
-          routing_keys: typeof s === 'string' ? [] : s.routingKeys
-        }}})) ?? [],
-        verification_methods: doc.verificationMethod?.map(v => {
-          let type = v.type;
-          let format = type === 'JsonWebKey2020' ? 'JWK' : type === 'X25519KeyAgreementKey2019' || type === 'Ed25519VerificationKey2018' ? 'Base58' : type === 'X25519KeyAgreementKey2020' || type === 'Ed25519VerificationKey2020' ? 'Multibase' : type;
-          let value = format === 'JWK' ? v.publicKeyJwk : format === 'Base58' ? v.publicKeyBase58 : format === 'Multibase' ? v.publicKeyMultibase : null;
+      const newDoc = {
+        id: doc.id,
+        keyAgreement: doc.keyAgreement?.map(k => typeof k === 'string' ? k : k.id) ?? [],
+        authentication: doc.authentication?.map(k => typeof k === 'string' ? k :k.id) ?? [],
+        service: doc.service?.map(s => ({
+          id: typeof s === 'string' ? s : s.id,
+          type: typeof s === 'string' ? s : s.type,
+          serviceEndpoint: typeof s === 'string' ? s : {
+            uri: s.serviceEndpoint.uri,
+            accept: s.serviceEndpoint.accept,
+            routingKeys: typeof s === 'string' ? [] : s.serviceEndpoint.routingKeys
+          }})) ?? [],
+        verificationMethod: doc.verificationMethod?.map(v => {
+          const type = v.type;
+          const format = type === 'JsonWebKey2020' ? 'JWK' : type === 'X25519KeyAgreementKey2019' || type === 'Ed25519VerificationKey2018' ? 'Base58' : type === 'X25519KeyAgreementKey2020' || type === 'Ed25519VerificationKey2020' ? 'Multibase' : type;
+          const value = format === 'JWK' ? v.publicKeyJwk : format === 'Base58' ? v.publicKeyBase58 : format === 'Multibase' ? v.publicKeyMultibase : null;
+          const key = type === 'JsonWebKey2020' ? 'publicKeyJwk' : type === 'X25519KeyAgreementKey2019' || type === 'Ed25519VerificationKey2018' ? 'publicKeyBase58' : type === 'X25519KeyAgreementKey2020' || type === 'Ed25519VerificationKey2020' ? 'publicKeyMultibase' : type;
           return {
             id: v.id,
             type,
             controller: v.controller,
-            verification_material: {
-              format,
-              value
-            }
+            [key] : value
           }
         }) ?? []
-      }
+      };
+      return newDoc
     }
     return null;
   }

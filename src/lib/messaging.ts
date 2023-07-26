@@ -71,9 +71,9 @@ export class DIDComm implements IDIDComm {
     }
     try {
       service = serviceId
-        ? didDoc?.services.find(s => s.id === serviceId)
-        : didDoc?.services && didDoc.services.length > 0 ? didDoc?.services[0] : undefined
-      serviceEndpoint = (service?.kind as any).DIDCommMessaging.service_endpoint
+        ? didDoc?.service.find(s => s.id === serviceId)
+        : didDoc?.service && didDoc.service.length > 0 ? didDoc?.service[0] : undefined
+      serviceEndpoint = service?.serviceEndpoint;
       if (!serviceEndpoint) 
         throw new Error("service endpoint not found");
       if (serviceEndpoint === this.myURL) {

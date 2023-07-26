@@ -1,5 +1,8 @@
 {
-	"@context": ["https://www.w3.org/ns/did/v1", "https://w3id.org/security/suites/jws-2020/v1"],
+	"@context": [
+		"https://www.w3.org/ns/did/v1",
+		"https://w3id.org/security/suites/jws-2020/v1"
+	],
 	"id": "did:example:bob",
 	"verificationMethod": [
 		{
@@ -9,15 +12,26 @@
 			"publicKeyBase58": "3zSE11h82KtPYPj8p9cTgzr6yDWFYEsfM19xc1K5vjKY"
 		}
 	],
-	"authentication": ["did:example:bob#key-1"],
-	"assertionMethod": ["did:example:bob#key-1"],
-	"keyAgreement": ["did:example:bob#key-1"],
+	"authentication": [
+		"did:example:bob#key-1"
+	],
+	"assertionMethod": [
+		"did:example:bob#key-1"
+	],
+	"keyAgreement": [
+		"did:example:bob#key-1"
+	],
 	"service": [
 		{
 			"id": "did:example:bob#didcomm",
 			"type": "DIDCommMessaging",
-			"serviceEndpoint": "http://example.com/didcomm",
-			"routingKeys": []
+			"serviceEndpoint": {
+				"uri": "http://example.com/didcomm",
+				"accept": [
+					"didcomm/v2"
+				],
+				"routingKeys": []
+			}
 		}
 	]
 }
