@@ -45,7 +45,7 @@ export class DIDCommSecretResolver {
       const type = doc.type;
       const format = type === 'JsonWebKey2020' ? 'JWK' : type === 'X25519KeyAgreementKey2019' || type === 'Ed25519VerificationKey2018' ? 'Base58' : type === 'X25519KeyAgreementKey2020' || type === 'Ed25519VerificationKey2020' ? 'Multibase' : type;
       const value = format === 'JWK' ? doc.privateKeyJwk : format === 'Base58' ? doc.privateKeyBase58 : format === 'Multibase' ? doc.privateKeyMultibase : null;
-      const key = type === 'JsonWebKey2020' ? 'publicKeyJwk' : type === 'X25519KeyAgreementKey2019' || type === 'Ed25519VerificationKey2018' ? 'publicKeyBase58' : type === 'X25519KeyAgreementKey2020' || type === 'Ed25519VerificationKey2020' ? 'publicKeyMultibase' : type;
+      const key = type === 'JsonWebKey2020' ? 'privateKeyJwk' : type === 'X25519KeyAgreementKey2019' || type === 'Ed25519VerificationKey2018' ? 'privateKeyBase58' : type === 'X25519KeyAgreementKey2020' || type === 'Ed25519VerificationKey2020' ? 'privateKeyMultibase' : type;
 
       return {
         id: doc.id,
