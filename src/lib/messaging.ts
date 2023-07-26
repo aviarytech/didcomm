@@ -76,6 +76,7 @@ export class DIDComm implements IDIDComm {
       serviceEndpoint = service?.serviceEndpoint?.uri;
       if (!serviceEndpoint) 
         throw new Error("service endpoint not found");
+      console.log(serviceEndpoint, this.myURL)
       if (serviceEndpoint === this.myURL) {
         console.log('Not sending didcomm message to my own endpoint')
         return true;
