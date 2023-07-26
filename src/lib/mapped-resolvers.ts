@@ -15,7 +15,7 @@ export const DIDCommDIDResolver = (didResolver: IDIDResolver) => ({
           serviceEndpoint: typeof s === 'string' ? s : {
             uri: s.serviceEndpoint.uri,
             accept: s.serviceEndpoint.accept,
-            routingKeys: typeof s === 'string' ? [] : s.serviceEndpoint.routingKeys
+            routingKeys: s.serviceEndpoint.routingKeys ?? []
           }})) ?? [],
         verificationMethod: doc.verificationMethod?.map(v => {
           const type = v.type;
