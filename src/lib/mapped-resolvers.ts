@@ -42,23 +42,22 @@ export class DIDCommSecretResolver {
   async get_secret(id: string): Promise<Secret | null> {
     const doc = await this.secretResolver.resolve(id)
     if (doc) {
-      let type = doc.type;
-      let format = type === 'JsonWebKey2020' ? 'JWK' : type === 'X25519KeyAgreementKey2019' || type === 'Ed25519VerificationKey2018' ? 'Base58' : type === 'X25519KeyAgreementKey2020' || type === 'Ed25519VerificationKey2020' ? 'Multibase' : type;
-      let value = format === 'JWK' ? doc.privateKeyJwk : format === 'Base58' ? doc.privateKeyBase58 : format === 'Multibase' ? doc.privateKeyMultibase : null;
+      const type = doc.type;
+      const format = type === 'JsonWebKey2020' ? 'JWK' : type === 'X25519KeyAgreementKey2019' || type === 'Ed25519VerificationKey2018' ? 'Base58' : type === 'X25519KeyAgreementKey2020' || type === 'Ed25519VerificationKey2020' ? 'Multibase' : type;
+      const value = format === 'JWK' ? doc.privateKeyJwk : format === 'Base58' ? doc.privateKeyBase58 : format === 'Multibase' ? doc.privateKeyMultibase : null;
+      const key = type === 'JsonWebKey2020' ? 'publicKeyJwk' : type === 'X25519KeyAgreementKey2019' || type === 'Ed25519VerificationKey2018' ? 'publicKeyBase58' : type === 'X25519KeyAgreementKey2020' || type === 'Ed25519VerificationKey2020' ? 'publicKeyMultibase' : type;
+
       return {
         id: doc.id,
         type,
-        secret_material: {
-          format,
-          value
-        }
+        [key]: value
       }
     }
     return null;
   }
 
   async find_secrets(ids: string[]): Promise<string[]> {
-    let secrets = [];
+    const secrets = [];
     for (let i = 0; i < ids.length; i++) {
       const secret = await this.get_secret(ids[i])
       if (secret) {
