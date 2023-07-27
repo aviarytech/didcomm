@@ -30,6 +30,7 @@ export const DIDCommDIDResolver = (didResolver: IDIDResolver) => ({
           }
         }) ?? []
       };
+      console.log(`transformed did doc for sicpa`, JSON.stringify(newDoc, null, 2));
       return newDoc
     }
     return null;

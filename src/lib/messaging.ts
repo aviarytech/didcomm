@@ -84,6 +84,7 @@ export class DIDComm implements IDIDComm {
       const resp = await fetch(serviceEndpoint, {
         method: 'POST',
         mode: 'cors',
+        redirect: 'manual',
         headers: {
           'Content-Type': DIDCOMM_MESSAGE_MEDIA_TYPE.ENCRYPTED
         },
